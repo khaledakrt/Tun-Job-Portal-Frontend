@@ -1,5 +1,4 @@
 export const environment = {
   production: false,
-  apiUrl: 'https://onrender.com',
-  assetsUrl: 'https://tun-job-portal-backend.onrender.com'
+  apiUrl: 'http://localhost:5000' // L'adresse de ton back-end local
 };

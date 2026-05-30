@@ -4,6 +4,7 @@
   "main": "index.js",
   "scripts": {
     "start": "ng serve",
+    "build": "node ./node_modules/@angular/cli/bin/ng.js build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

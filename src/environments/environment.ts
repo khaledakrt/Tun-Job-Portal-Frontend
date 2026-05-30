@@ -1,4 +1,5 @@
 export const environment = {
-  production: true,
-  apiUrl: '/api' // Ne mets PLUS le lien entier, mets juste '/api'
+  production: false,
+  apiUrl: 'http://localhost:3000',
+  assetsUrl: 'http://localhost:3000'
 };

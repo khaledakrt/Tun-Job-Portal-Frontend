@@ -1,0 +1,36 @@
+    <div class="centers-page-container">
+      <div class="page-header">
+        <h2><i class="bi bi-mortarboard-fill"></i> Centres de Formation Partenaires</h2>
+        <p>Boostez vos compétences avec nos centres de formation certifiés en Tunisie.</p>
+      </div>
+
+      @if (isLoading) {
+        <div class="loading-box"><i class="bi bi-arrow-clockwise spin"></i> Chargement des centres...</div>
+      } @else {
+        <div class="centers-grid">
+          @for (center of centers; track center.id) {
+            <div class="center-card">
+              <div class="center-logo">
+                <img [src]="center.company_logo ? assetsUrl + '/logos/' + center.company_logo : 'assets/images/default-avatar.png'" 
+                     (error)="$any($event.target).src='assets/images/default-avatar.png'" alt="Logo">
+              </div>
+              <div class="center-info">
+                <h4>{{ center.name }}</h4>
+                <span class="location-badge"><i class="bi bi-geo-alt-fill"></i> {{ center.address || 'Tunisie' }}</span>
+                <p class="center-bio">{{ center.company_bio | slice:0:120 }}{{ center.company_bio?.length > 120 ? '...' : '' }}</p>
+              </div>
+              <div class="card-footer">
+                <a [href]="'mailto:' + center.email" class="btn-contact-public"><i class="bi bi-envelope"></i> Contact</a>
+              </div>
+            </div>
+          }
+        </div>
+
+        @if (centers.length === 0) {
+          <div class="empty-state">
+            <i class="bi bi-mortarboard"></i>
+            <p>Aucun centre de formation n'est encore répertorié.</p>
+          </div>
+        }
+      }
+    </div>

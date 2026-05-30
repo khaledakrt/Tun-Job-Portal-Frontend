@@ -1,0 +1,42 @@
+ 
+<div class="manage-container">
+  
+  <div class="card-header-flex">
+    <div class="card-header-left">
+      <h3><i class="bi bi-speedometer2"></i> Vue d'ensemble</h3>
+      <p>Statistiques globales en temps réel de l'activité sur Tun-Job Portal.</p>
+    </div>
+  </div>
+
+  <div *ngIf="isLoading" style="text-align: center; padding: 40px; color: #64748b;">
+    <i class="bi bi-arrow-clockwise" style="display: inline-block; animation: spin 1s linear infinite; margin-right: 6px;"></i> Chargement des compteurs...
+  </div>
+
+  <!-- ZONE DES CARTES DE STATISTIQUES -->
+  <div *ngIf="!isLoading" class="admin-stats-grid">
+    <div class="stat-premium-card card-blue">
+      <div class="stat-icon"><i class="bi bi-people-fill"></i></div>
+      <div class="stat-info">
+        <h4>Candidats inscrits</h4>
+        <span class="stat-number">{{ stats.totalCandidates }}</span>
+      </div>
+    </div>
+
+    <div class="stat-premium-card card-emerald">
+      <div class="stat-icon"><i class="bi bi-building-fill"></i></div>
+      <div class="stat-info">
+        <h4>Recruteurs partenaires</h4>
+        <span class="stat-number">{{ stats.totalRecruiters }}</span>
+      </div>
+    </div>
+
+    <div class="stat-premium-card card-amber">
+      <div class="stat-icon"><i class="bi bi-briefcase-fill"></i></div>
+      <div class="stat-info">
+        <h4>Offres d'emploi</h4>
+        <span class="stat-number">{{ stats.totalJobs }}</span>
+      </div>
+    </div>
+  </div>
+
+</div>

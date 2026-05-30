@@ -1,0 +1,450 @@
+/* ==========================================================================
+   🕋 CONTENEUR PRINCIPAL FLUIDE & SAAS DESIGN
+   ========================================================================== */
+.job-container-compact { 
+  max-width: 100% !important; 
+  margin: 0 auto; 
+  padding: 0 20px !important; 
+  font-family: inherit; 
+  box-sizing: border-box;
+}
+
+.card-header-flex-compact { 
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center; 
+  margin-bottom: 15px; 
+}
+
+.card-header-left h3 { 
+  margin: 0; 
+  color: #0f172a; 
+  font-size: 18px; 
+  font-weight: 700; 
+  display: flex; 
+  align-items: center; 
+  gap: 8px; 
+}
+
+/* ==========================================================================
+   💎 DISPOSITION SPLIT : 2 PANNEAUX SANS SCROLL CONTRE LE VIDE
+   ========================================================================== */
+.job-split-layout { 
+  display: grid; 
+  grid-template-columns: 1fr 1.2fr; /* Équilibre parfait pour accueillir les textareas à droite */
+  gap: 24px; 
+  align-items: start; 
+  width: 100%;
+}
+
+.job-panel-card { 
+  background: #ffffff; 
+  border-radius: 12px; 
+  border: 1px solid #4e77ad; 
+  padding: 26px; 
+  box-shadow: 0 1px 3px rgba(0,0,0,0.02); 
+  box-sizing: border-box;
+}
+
+.panel-inner-title { 
+  font-size: 14px; 
+  font-weight: 700; 
+  color: #010204; 
+  text-align: left; 
+  margin-bottom: 18px; 
+  display: flex; 
+  align-items: center; 
+  gap: 8px; 
+}
+.panel-inner-title i { color: #03496a; }
+
+/* Grilles de formulaires condensées */
+.compact-form-grid { 
+  display: grid; 
+  grid-template-columns: 1fr 1fr; 
+  gap: 14px; 
+}
+.compact-form-grid.vertical-stack { 
+  grid-template-columns: 1fr; 
+  gap: 14px; 
+}
+
+.form-group-compact { 
+  display: flex; 
+  flex-direction: column; 
+  gap: 6px; 
+}
+.form-group-compact.span-all { 
+  grid-column: span 2; 
+}
+
+.form-group-compact label { 
+  font-size: 11px; 
+  font-weight: 700; 
+  color: #64748b; 
+  text-align: left; 
+  text-transform: uppercase; 
+  letter-spacing: 0.3px; 
+}
+
+/* Zones d'entrées et sélecteurs unifiés */
+.form-group-compact input, 
+.form-select-compact, 
+.form-group-compact textarea { 
+  width: 100% !important; 
+  padding: 10px 14px !important; 
+  border: 1px solid #6385b0 !important; 
+  border-radius: 6px !important; 
+  font-size: 13.5px !important; 
+  box-sizing: border-box !important; 
+  color: #233758 !important; 
+  background-color: #ffffff !important; 
+  font-family: inherit !important;
+  margin: 0 !important;
+  transition: border-color 0.2s ease;
+}
+
+.form-group-compact input:focus, 
+.form-select-compact:focus, 
+.form-group-compact textarea:focus { 
+  border-color: #0ea5e9 !important; 
+  outline: none !important; 
+  box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.12) !important; 
+}
+
+.form-select-compact {
+  cursor: pointer;
+}
+
+/* Ajustement de hauteur pour les deux zones de texte longues */
+.form-group-compact textarea {
+  min-height: 105px;
+  max-height: 105px;
+  resize: none;
+  line-height: 1.5;
+}
+
+/* 🔘 ACTION DE SOUFFLAGE DE L'OFFRE (BOUTON PREMIUM) */
+.form-actions-compact { 
+  display: flex; 
+  justify-content: flex-end; 
+  padding-top: 15px; 
+  border-top: 1px solid #f1f5f9; 
+}
+
+.btn-publish-job-compact { 
+  background-color: #0ea5e9 !important; 
+  color: #ffffff !important; 
+  border: none !important; 
+  border-radius: 6px !important; 
+  padding: 11px 24px !important; 
+  font-size: 13.5px !important; 
+  font-weight: 600 !important; 
+  cursor: pointer !important; 
+  display: inline-flex !important; 
+  align-items: center !important; 
+  gap: 8px !important; 
+  transition: background-color 0.2s ease !important; 
+}
+
+.btn-publish-job-compact:hover { 
+  background-color: #0284c7 !important; 
+}
+
+/* ==========================================================================
+   🚀 TOAST NOTIFICATION FLOATING PRO
+   ========================================================================== */
+.toast-notification {
+  position: fixed !important;
+  top: 25px !important;
+  right: 25px !important;
+  z-index: 12000 !important;
+  min-width: 320px;
+  max-width: 480px;
+  padding: 16px 20px;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  animation: slideInFromRight 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* Thème d'insertion acceptée (Vert) */
+.toast-notification.success {
+  background-color: #ecfdf5 !important;
+  border-left: 5px solid #059669 !important;
+  color: #065f46 !important;
+}
+
+/* Thème d'erreur (Rouge) */
+.toast-notification.error {
+  background-color: #fef2f2 !important;
+  border-left: 5px solid #dc2626 !important;
+  color: #991b1b !important;
+}
+
+.toast-content {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.toast-icon {
+  font-size: 22px;
+  display: flex;
+  align-items: center;
+}
+
+.toast-message {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+  text-align: left;
+}
+
+/* Animation d'apparition dynamique */
+@keyframes slideInFromRight {
+  from { transform: translateX(130%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+/* Quiz optionnel + popup */
+.quiz-optional-card {
+  margin-top: 18px;
+  padding: 18px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: linear-gradient(145deg, #faf5ff 0%, #f8fafc 100%);
+}
+
+.quiz-optional-header h4 {
+  margin: 0 0 4px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.quiz-optional-header h4 i {
+  color: #7c3aed;
+}
+
+.quiz-optional-header p {
+  margin: 0;
+  font-size: 12.5px;
+  color: #64748b;
+}
+
+.btn-activate-quiz {
+  margin-top: 14px;
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px dashed #c4b5fd;
+  background: #fff;
+  color: #6b21a8;
+  font-size: 14px;
+  font-weight: 700;
+  border-radius: 10px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.btn-activate-quiz:hover {
+  background: #f5f3ff;
+  border-color: #7c3aed;
+}
+
+.quiz-saved-banner,
+.quiz-draft-banner {
+  margin-top: 14px;
+  padding: 14px 16px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.quiz-saved-banner {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+}
+
+.quiz-saved-banner strong {
+  color: #166534;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.quiz-saved-banner p {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: #15803d;
+}
+
+.quiz-draft-banner {
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+}
+
+.quiz-draft-banner p {
+  margin: 0;
+  font-size: 13px;
+  color: #c2410c;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.quiz-saved-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-quiz-primary,
+.btn-quiz-secondary,
+.btn-quiz-danger {
+  border: none;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-quiz-primary {
+  background: #7c3aed;
+  color: #fff;
+}
+
+.btn-quiz-secondary {
+  background: #fff;
+  color: #334155;
+  border: 1px solid #cbd5e1;
+}
+
+.btn-quiz-danger {
+  background: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+}
+
+.quiz-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(6px);
+  z-index: 13000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.quiz-modal-card {
+  width: 100%;
+  max-width: 760px;
+  max-height: 90vh;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.quiz-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 22px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.quiz-modal-header h3 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.quiz-modal-header h3 i {
+  color: #7c3aed;
+}
+
+.quiz-modal-close {
+  width: 34px;
+  height: 34px;
+  border: none;
+  border-radius: 50%;
+  background: #f1f5f9;
+  color: #64748b;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.quiz-modal-body {
+  padding: 20px 22px 24px;
+  overflow-y: auto;
+}
+
+.quiz-modal-body .quiz-builder-card {
+  margin-top: 0;
+  box-shadow: none;
+}
+
+/* ==========================================================================
+   🚀 AUTOCOMPLÉTION LOCALISATION (PROFESSIONNEL)
+   ========================================================================== */
+.autocomplete-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.autocomplete-dropdown {
+  position: absolute;
+  top: 100%; /* Juste en dessous de l'input */
+  left: 0;
+  right: 0;
+  z-index: 1000; /* Assure que la liste est au-dessus des autres éléments */
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  list-style: none;
+  padding: 8px 0;
+  margin: 4px 0 0 0;
+  max-height: 200px; /* Limite la hauteur et ajoute un scroll */
+  overflow-y: auto;
+}
+
+.autocomplete-dropdown li {
+  padding: 10px 15px;
+  font-size: 14px;
+  color: #334155;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.autocomplete-dropdown li:hover {
+  background-color: #f0f9ff; /* Bleu très clair au survol */
+  color: #0ea5e9; /* Texte bleu */
+}
+
+/* Style pour l'input d'autocomplétion (reprend le style existant) */
+.autocomplete-wrapper input {
+  width: 100%; /* Assure que l'input prend toute la largeur */
+}

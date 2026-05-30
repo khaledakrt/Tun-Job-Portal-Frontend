@@ -1,0 +1,388 @@
+<div class="job-search-container">
+  
+  <!-- 🔍 ZONE SUPÉRIEURE : RECHERCHE AVANCÉE -->
+  <div class="search-advanced-card">
+    <div class="advanced-search-grid">
+      <div class="search-filter-group">
+        <label><i class="bi bi-briefcase"></i> Titre du poste</label>
+        <div class="input-with-icon"><i class="bi bi-search"></i><input type="text" [(ngModel)]="searchFilters.title" placeholder="Ex: Angular..."></div>
+      </div>
+      <div class="search-filter-group">
+        <label><i class="bi bi-geo-alt"></i> Ville / Région</label>
+        <div class="input-with-icon"><i class="bi bi-map"></i><input type="text" [(ngModel)]="searchFilters.location" placeholder="Ex: Tunis..."></div>
+      </div>
+      <div class="search-filter-group">
+        <label><i class="bi bi-mortarboard"></i> Expérience</label>
+        <select [(ngModel)]="searchFilters.experience" class="select-filter-compact">
+          <option value="">Tous les niveaux</option>
+          <option value="Junior (0-2 ans)">Junior (0-2 ans)</option>
+          <option value="Intermédiaire (2-5 ans)">Intermédiaire (2-5 ans)</option>
+          <option value="Senior (5+ ans)">Senior (5+ ans)</option>
+        </select>
+      </div>
+      <div class="search-filter-group">
+        <label><i class="bi bi-tags"></i> Contrat</label>
+        <select [(ngModel)]="searchFilters.contract" class="select-filter-compact">
+          <option value="">Tous les contrats</option>
+          <option value="CDI">CDI</option>
+          <option value="CDD">CDD</option>
+          <option value="SIVP">SIVP</option>
+        </select>
+      </div>
+    </div>
+    @if (hasActiveFilters) {
+      <div class="reset-filters-row"><button type="button" class="btn-reset-filters" (click)="onResetFilters()"><i class="bi bi-x-circle"></i> Réinitialiser</button></div>
+    }
+  </div>
+
+  <!-- ⏳ CHARGEMENT -->
+  @if (isLoading) {
+    <div class="loading-state-box"><i class="bi bi-arrow-clockwise spin-animation"></i><p>Chargement...</p></div>
+  }
+
+  <!-- 🚀 GRILLE DES CARTES (3 PAR LIGNE) -->
+  @if (!isLoading && filteredJobs.length > 0) {
+    <div class="jobs-cards-grid-3" [class.logged-in-grid]="isLoggedIn">
+      @for (job of filteredJobs; track job.id) {
+        <div class="job-feed-card">
+          <div class="card-top-info">
+            <div class="company-logo-placeholder clickable-recruiter" (click)="onViewRecruiterProfile(job.recruiter_id)">
+              <img [src]="job.company_logo ? environment.assetsUrl + '/logos/' + job.company_logo : 'assets/images/default-avatar.png'" 
+                   (error)="$any($event.target).src='assets/images/default-avatar.png'"
+                   alt="Logo entreprise">
+            </div>
+            <div class="job-title-block">
+              <h4 class="feed-job-title">{{ job.title }}</h4>
+              <!-- 🌟 REND LE NOM CLIQUABLE POUR APPRENDRE PLUS SUR L'ENTREPRISE -->
+              <span class="feed-company-name clickable-recruiter" (click)="onViewRecruiterProfile(job.recruiter_id)">
+                <i class="bi bi-building-check"></i> {{ job.company_name || 'Entreprise Partenaire' }}
+              </span>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 6px; align-items: flex-end;">
+              <span class="contract-badge-feed">{{ job.contract_type }}</span>
+              @if (job.salary) {
+                <span class="salary-tag" style="font-size: 11.5px;">{{ job.salary }}</span>
+              }
+              @if (job.has_quiz) {
+                <span style="font-size: 10px; font-weight: 700; color: #7c3aed; background: #f3e8ff; padding: 3px 8px; border-radius: 6px;">
+                  <i class="bi bi-patch-question"></i> Quiz
+                </span>
+              }
+            </div>
+          </div>
+
+          <div class="card-mid-meta">
+            <span class="meta-item"><i class="bi bi-geo-alt-fill"></i> {{ job.location }}</span>
+            <span class="meta-item"><i class="bi bi-laptop-fill"></i> {{ job.workplace_type }}</span>
+            <span class="meta-item"><i class="bi bi-mortarboard-fill"></i> {{ job.experience_level }}</span>
+          </div>
+          <p class="job-short-desc">{{ job.missions_desc | slice:0:100 }}...</p>
+
+          <div class="card-bottom-actions">
+            <button class="btn-consult-job" (click)="onViewJobDetails(job)"><i class="bi bi-eye-fill"></i> Consulter</button>
+            @if (job.isAlreadyApplied) {
+              <span class="badge-already-applied"><i class="bi bi-check-circle-fill"></i> Déjà postulé</span>
+            } @else {
+              <button class="btn-apply-now" (click)="onOpenApplyModal(job)">Postuler <i class="bi bi-arrow-right-short"></i></button>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- 👁️ MODALE 1 : DETAILS DU POSTE (INTEGRATION DU LOGO ALIGNÉ) -->
+    <!-- 👁️ MODALE 1 : DETAILS DU POSTE (DESIGN PREMIUM UNIFIÉ) -->
+     @if (selectedJob) {
+    <div class="modal-overlay" (click)="onCloseModal()">
+      <div class="modal-card" (click)="$event.stopPropagation()">
+        
+        <!-- HEADER -->
+        <div class="modal-header">
+          <span>📄 Détails de l'offre d'emploi</span>
+          <button (click)="onCloseModal()" class="btn-close-modal"><i class="bi bi-x-lg"></i></button>
+        </div>
+
+        <!-- BODY -->
+        <div class="modal-body">
+          
+          <!-- HERO INFO -->
+          <div class="job-hero-section">
+            <div class="job-logo-wrapper">
+              <img [src]="selectedJob.company_logo ? environment.assetsUrl + '/logos/' + selectedJob.company_logo : 'assets/images/default-avatar.png'" 
+                   (error)="$any($event.target).src='assets/images/default-avatar.png'"
+                   alt="Logo entreprise">
+            </div>
+            
+            <div>
+              <h1 class="job-main-title">{{ selectedJob.title }}</h1>
+              <div class="job-company-link" (click)="onViewRecruiterProfile(selectedJob.recruiter_id)">
+                {{ selectedJob.company_name || 'Entreprise Partenaire' }}
+              </div>
+              
+              <div class="job-badges-row">
+                <span class="premium-badge badge-salary">💵 {{ selectedJob.salary || 'Non spécifié' }}</span>
+                <span class="premium-badge badge-contract">💼 {{ selectedJob.contract_type }}</span>
+                <span class="premium-badge badge-location">📍 {{ selectedJob.location }}</span>
+                @if (selectedJob.expires_at) {
+                  <span class="premium-badge badge-expiration">⏱️ {{ selectedJob.expires_at | date:'dd/MM/yyyy' }}</span>
+                }
+                <span class="premium-badge badge-experience">🎓 {{ selectedJob.experience_level }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- ACCORDION 1 : L'OFFRE -->
+          <details class="ats-section-card" open>
+            <summary class="ats-section-summary">
+              <span><i class="bi bi-file-earmark-text-fill"></i> Contenu de la fiche de poste</span>
+              <i class="bi bi-chevron-down accordion-icon"></i>
+            </summary>
+            
+            <div class="ats-section-content">
+              <div class="job-text-block-section">
+                <h2 class="section-title">Missions principales</h2>
+                <div class="job-block-card">
+                  <p>{{ selectedJob.missions_desc }}</p>
+                </div>
+              </div>
+
+              <div class="job-text-block-section">
+                <h2 class="section-title">Profil requis & Prérequis</h2>
+                <div class="job-block-card">
+                  <p>{{ selectedJob.profile_desc }}</p>
+                </div>
+              </div>
+
+              <!-- SECTION COMPÉTENCES & LANGUES (RÉINTÉGRÉE DANS L'ACCORDÉON) -->
+              <div class="skills-grid" style="margin-top: 15px; margin-bottom: 5px;">
+                @if (selectedJob.skills_desc) {
+                  <div class="skills-block">
+                    <h3>Compétences</h3>
+                    <div class="tags-list">
+                      @for (skill of getSearchJobSkillsArray(selectedJob.skills_desc); track $index) {
+                        <span class="tag">{{ skill }}</span>
+                      }
+                    </div>
+                  </div>
+                }
+                @if (selectedJob.languages_desc) {
+                  <div class="skills-block">
+                    <h3>Langues</h3>
+                    <div class="tags-list">
+                      @for (lang of getSearchJobLanguagesArray(selectedJob.languages_desc); track $index) {
+                        <span class="tag">🌐 {{ lang }}</span>
+                      }
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+          </details>
+
+          <!-- ACCORDION 2 : LE QUIZ -->
+          @if (selectedJob.has_quiz) {
+            <details class="ats-section-card" style="margin-top: 10px;">
+              <summary class="ats-section-summary">
+                <span>📝 Questionnaire de présélection</span>
+                <i class="bi bi-chevron-down accordion-icon"></i>
+              </summary>
+              <div class="ats-section-content" [class.quiz-disabled]="selectedJob.isAlreadyApplied">
+                @if (isLoadingQuiz) {
+                  <div style="text-align: center; padding: 20px; color: #64748b;">
+                    <i class="bi bi-arrow-clockwise spin-animation"></i> Chargement du questionnaire...
+                  </div>
+                } @else if (jobQuiz?.questions?.length) {
+                  <div class="quiz-info-row">
+                    <span>Répondez aux questions obligatoires</span>
+                    <span class="quiz-progress">
+                      {{ selectedJob.isAlreadyApplied ? 'Déjà postulé' : 'Évaluation de profil' }}
+                    </span> 
+                  </div>
+
+                  @for (q of jobQuiz.questions; track q.id; let i = $index) {
+                    <div class="question-item">
+                      <h4 class="question-text">
+                        <span>{{ i + 1 }}.</span> {{ q.question_text }}
+                      </h4>
+                      <div class="options-grid">
+                        @for (c of q.choices; track c.id) {
+                          <label class="option-card" [class.selected]="quizAnswers[q.id] === c.id">
+                            <input type="radio" 
+                                   [name]="'q' + q.id" 
+                                   [value]="c.id" 
+                                   [disabled]="selectedJob.isAlreadyApplied"
+                                   [checked]="quizAnswers[q.id] === c.id"
+                                   (change)="onQuizAnswerChange({questionId: q.id, choiceId: c.id})"> 
+                            <span>{{ c.choice_text }}</span>
+                          </label>
+                        }
+                      </div>
+                    </div>
+                  }
+                }
+              </div>
+            </details>
+          }
+
+
+          @if (applyError) {
+            <p style="color: #ef4444; font-size: 13px; margin: 0 0 12px;">{{ applyError }}</p>
+          }
+        </div>
+
+        <div class="modal-footer-action-row">
+          @if (selectedJob.isAlreadyApplied) {
+            <span class="premium-applied-banner"><i class="bi bi-check-circle-fill"></i> Vous avez déjà postulé à cette offre</span>
+          } @else {
+            <button
+              class="btn-submit-apply-large"
+              (click)="onRequestApplyConfirmation()"
+              [disabled]="!canSubmitApply() || isSubmitting"
+              [style.opacity]="canSubmitApply() ? '1' : '0.55'"
+            >
+              @if (isSubmitting) {
+                Envoi en cours…
+              } @else if (selectedJob.has_quiz && !canSubmitApply()) {
+                Complétez le quiz pour postuler
+              } @else {
+                Envoyer ma candidature <i class="bi bi-arrow-right-short"></i>
+              }
+            </button>
+          }
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- 🏢 🌟 MODALE 2 : FICHE DU RECRUTEUR (DESIGN SAAS COMPACT APPLIQUÉ ICI UNIQUEMENT) -->
+  @if (selectedRecruiter) {
+    <div class="modal-overlay" (click)="onCloseRecruiterModal()">
+      <div class="modal-card recruiter-profile-card" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <span>📄 Fiche de l'entreprise</span>
+          <button (click)="onCloseRecruiterModal()" class="btn-close-modal"><i class="bi bi-x-lg"></i></button>
+        </div>
+        <div class="modal-body">
+          
+          <!-- HERO INFO -->
+          <div class="recruiter-hero-section">
+            <div class="recruiter-logo-wrapper">
+              <img [src]="selectedRecruiter.company_logo ? environment.assetsUrl + '/logos/' + selectedRecruiter.company_logo : 'assets/images/default-avatar.png'" 
+                   (error)="$any($event.target).src='assets/images/default-avatar.png'"
+                   alt="Logo entreprise">
+            </div>
+            <div class="recruiter-meta-content">
+              <h1 class="recruiter-main-title">{{ selectedRecruiter.company_name }}</h1>
+              <div class="recruiter-verified-badge">
+                <i class="bi bi-patch-check-fill"></i> Partenaire Vérifié
+              </div>
+            </div>
+          </div>
+
+          <details class="ats-section-card" open>
+            <summary class="ats-section-summary">
+              <span>📋 Coordonnées & Localisation</span>
+              <i class="bi bi-chevron-down accordion-icon"></i>
+            </summary>
+            <div class="ats-section-content">
+              <h2 class="section-title">Informations de contact</h2>
+              <div class="recruiter-contact-grid">
+                <div class="contact-item">
+                  <strong><i class="bi bi-envelope"></i> Email :</strong> <span>{{ selectedRecruiter.email || 'Non spécifié' }}</span>
+                </div>
+                <div class="contact-item">
+                  <strong><i class="bi bi-telephone"></i> Téléphone :</strong> <span>{{ selectedRecruiter.phone || 'Non spécifié' }}</span>
+                </div>
+                <div class="contact-item span-two">
+                  <strong><i class="bi bi-geo-alt"></i> Siège social :</strong> <span>{{ selectedRecruiter.address || 'Non spécifié' }}</span>
+                </div>
+              </div>
+            </div>
+          </details>
+
+          <details class="ats-section-card" open>
+            <summary class="ats-section-summary">
+              <span><i class="bi bi-building-fill"></i> À propos de l'entreprise</span>
+              <i class="bi bi-chevron-down accordion-icon"></i>
+            </summary>
+            <div class="ats-section-content">
+              <h2 class="section-title">Présentation</h2>
+              <div class="job-text-block-section">
+                <div class="job-block-card">
+                  <p class="section-text">{{ selectedRecruiter.company_bio || 'Aucune description fournie par l\'entreprise.' }}</p>
+                </div>
+              </div>
+            </div>
+          </details>
+        </div>
+      </div>
+    </div>
+  }
+  <!-- 🎛️ UNIQUE POP-UP DE CONFIRMATION DE CANDIDATURE EN SURIMPRESSION -->
+  @if (showConfirmApplyPopup) {
+    <div class="modal-overlay" style="z-index: 100005;" (click)="onCancelApplyConfirmation()">
+      <div class="modal-card" (click)="$event.stopPropagation()" style="max-width: 440px; padding: 28px; text-align: center; display: flex; flex-direction: column; gap: 16px;">
+        @if (applyPopupSuccess) {
+          <div style="font-size: 42px; margin-bottom: 4px;">✅</div>
+          <h4 style="margin: 0; font-size: 17px; font-weight: 700; color: #166534;">Candidature envoyée !</h4>
+          <p style="margin: 0; font-size: 13.5px; color: #64748b; line-height: 1.6;">
+            Votre profil a bien été transmis pour l'offre :<br>
+            <strong style="color: #0ea5e9;">{{ jobToApply?.title }}</strong>
+          </p>
+        } @else {
+          <div style="font-size: 42px; margin-bottom: 4px;">🚀</div>
+          <h4 style="margin: 0; font-size: 17px; font-weight: 700; color: #0f172a;">Confirmer votre candidature</h4>
+          <p style="margin: 0; font-size: 13.5px; color: #64748b; line-height: 1.6;">
+            Souhaitez-vous transmettre votre profil TunJob pour l'offre : <br>
+            <strong style="color: #0ea5e9;">{{ jobToApply?.title }}</strong> ?
+          </p>
+          @if (jobToApply?.has_quiz) {
+            <p style="margin: 0; font-size: 12px; color: #7c3aed; background: #f3e8ff; padding: 8px 12px; border-radius: 8px;">
+              <i class="bi bi-patch-question"></i> Vos réponses au quiz seront jointes à votre candidature.
+            </p>
+          }
+
+          @if (applyError) {
+            <p style="color: #ef4444; font-size: 13px; margin: 0;">{{ applyError }}</p>
+          }
+
+          <div style="display: flex; gap: 12px; margin-top: 12px; width: 100%;">
+            <button type="button" (click)="onCancelApplyConfirmation()" class="btn-close-modal" style="flex: 1; height: 42px; border-radius: 8px; width: 100%; font-weight: 600; font-size: 13px;">
+              Annuler
+            </button>
+            <button type="button" (click)="executeApplySubmit()" [disabled]="!canSubmitApply() || isSubmitting" class="btn-submit-apply-large" style="flex: 1; height: 42px; border-radius: 8px; font-size: 13px;">
+              @if (isSubmitting) { Envoi… } @else { Confirmer }
+            </button>
+          </div>
+        }
+      </div>
+    </div>
+  }
+<!-- Popup Professionnelle d'Invitation à la Connexion / Inscription -->
+@if (showAuthRequiredPopup) {
+  <div class="custom-modal-overlay-auth" (click)="showAuthRequiredPopup = false">
+    <div class="custom-modal-box-auth" (click)="$event.stopPropagation()">
+      
+      <div class="custom-modal-header-auth">
+        <i class="bi bi-box-arrow-in-right login-icon-ats"></i>
+        <h3>Connexion requise</h3>
+      </div>
+      
+      <div class="custom-modal-body-auth">
+        <p>Pour postuler à cette offre et transmettre votre dossier aux recruteurs sur <strong>TunJob Portal</strong>, vous devez posséder un compte candidat connecté.</p>
+        <p class="sub-text-auth">L'inscription est gratuite et prend moins de 2 minutes !</p>
+      </div>
+      
+      <div class="custom-modal-footer-auth">
+        <button type="button" class="btn-modal-cancel-auth" (click)="showAuthRequiredPopup = false">
+          Plus tard
+        </button>
+        <button type="button" class="btn-modal-confirm-auth" (click)="goToLogin()">
+          Se connecter / S'inscrire
+        </button>
+      </div>
+
+    </div>
+  </div>
+}

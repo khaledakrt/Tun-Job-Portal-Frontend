@@ -1,0 +1,11 @@
+@import "../manage-users/manage-users.component.css";
+
+/* Ajustements spécifiques pour les candidatures */
+.job-profile-card { max-width: 650px !important; }
+.job-hero-section { display: flex; gap: 16px; align-items: center; padding-bottom: 20px; border-bottom: 1px solid #f1f5f9; margin-bottom: 10px; }
+.job-logo-wrapper { width: 64px; height: 64px; border-radius: 50%; overflow: hidden; background: #f8fafc; border: 1px solid #e2e8f0; }
+.job-logo-wrapper img { width: 100%; height: 100%; object-fit: cover; }
+.job-main-title { font-size: 18px; font-weight: 800; color: #0f172a; margin: 0; }
+.job-company-link { color: #2563eb; font-weight: 600; font-size: 13px; margin-top: 2px; }
+
+.bg-blue { background: #eff6ff; color: #1d4ed8; border: 1px solid #dbeafe; }

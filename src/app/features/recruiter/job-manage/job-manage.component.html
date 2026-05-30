@@ -1,0 +1,272 @@
+<div class="manage-container">
+
+  <!-- 📊 SECTION COMPTEURS DYNAMIQUE -->
+   <!-- 📊 SECTION COMPTEURS DYNAMIQUE -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-content">
+        <span class="stat-label">OFFRES ACTIVES</span>
+        <span class="stat-number">{{ jobsList.length }}</span>
+        <span class="stat-sub green">+1 cette semaine</span>
+      </div>
+      <div class="stat-icon blue-bg"><i class="bi bi-briefcase"></i></div>
+    </div>
+    
+    <div class="stat-card">
+      <div class="stat-content">
+        <span class="stat-label">CANDIDATURES</span>
+        <!-- 🚀 LIEN VARIABLE MYSQL -->
+        <span class="stat-number">{{ recruiterStats.totalApplications }}</span>
+        <span class="stat-sub green">+8 aujourd'hui</span>
+      </div>
+      <div class="stat-icon green-bg"><i class="bi bi-file-earmark-person"></i></div>
+    </div>
+    
+    <div class="stat-card">
+      <div class="stat-content">
+        <span class="stat-label">ENTRETIENS</span>
+        <!-- 🚀 LIEN VARIABLE MYSQL -->
+        <span class="stat-number">{{ recruiterStats.plannedInterviews }}</span>
+        <span class="stat-sub gray">Planifiés ce mois</span>
+      </div>
+      <div class="stat-icon orange-bg"><i class="bi bi-calendar-event"></i></div>
+    </div>
+    
+    <div class="stat-card">
+      <div class="stat-content">
+        <span class="stat-label">TAUX DE CONVERSION</span>
+        <!-- 🚀 LIEN VARIABLE MYSQL -->
+        <span class="stat-number">{{ recruiterStats.conversionRate }}%</span>
+        <span class="stat-sub green">+-2.4% vs mois max</span>
+      </div>
+      <div class="stat-icon purple-bg"><i class="bi bi-pie-chart"></i></div>
+    </div>
+  </div>
+
+
+  <!-- 📋 SECTION TABLEAU DES ANNONCES AVEC RECHERCHE -->
+  <div class="manage-card">
+    <div class="card-header-flex">
+      <!-- 🌟 REGROUPEMENT OBLIGATOIRE DU TITRE ET DE SA DESCRIPTION -->
+      <div class="card-header-left">
+        <h3><i class="bi bi-briefcase-fill"></i> Vos Annonces en Ligne</h3>
+      </div>
+      
+      <!-- 🔍 BARRE DE RECHERCHE COMPACTE ET PARFAITEMENT ALIGNÉE -->
+      <div class="search-box-container">
+        <i class="bi bi-search search-icon"></i>
+        <input 
+          type="text" 
+          [(ngModel)]="searchText" 
+          (ngModelChange)="onSearchChange()"
+          placeholder="Rechercher..." 
+          class="search-input"
+        >
+      </div>
+    </div>
+
+    <div class="table-wrapper">
+      <table class="jobs-table">
+        <thead>
+          <tr>
+            <th>Intitulé du Poste</th>
+            <th>Type de Contrat</th>
+            <th>Localisation</th>
+            <th>Candidatures Reçues</th>
+            <th>Statut</th>
+            <th>Quiz</th>
+            <th style="text-align: center;">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (isLoading) {
+            <tr>
+              <td colspan="7" style="text-align: center; padding: 25px; color: #64748b; font-weight: 500;">
+                <i class="bi bi-arrow-clockwise" style="display: inline-block; animation: spin 1s linear infinite; margin-right: 8px;"></i>
+                Synchronisation avec la base de données...
+              </td>
+            </tr>
+          }
+
+          @if (!isLoading && filteredJobs.length === 0) {
+            <tr>
+              <td colspan="7" style="text-align: center; padding: 35px; color: #64748b;">
+                <i class="bi bi-folder-x" style="font-size: 26px; display: block; margin-bottom: 6px; color: #cbd5e1;"></i>
+                Aucune annonce ne correspond à votre recherche.
+              </td>
+            </tr>
+          }
+
+          <!-- 🚀 RENDU PAGINÉ -->
+          @for (job of paginatedJobs; track job.id) {
+            <tr>
+              <td class="job-title">{{ job.title }}</td>
+              <td>{{ job.contract_type }}</td>
+              <td>{{ job.location }}</td>
+              <td class="candidate-count">
+                <i class="bi bi-people-fill"></i> 
+                {{ job.application_count || 0 }} {{ (job.application_count || 0) <= 1 ? 'profil' : 'profils' }}
+              </td>
+              <td>
+                <span class="status-badge" [ngClass]="job.status === 'disponible' || job.status === 'Actif' ? 'bg-green' : 'bg-gray'">
+                  {{ job.status === 'disponible' || job.status === 'Actif' ? 'Actif' : 'Masqué' }}
+                </span>
+              </td>
+              <td>
+                <span class="status-badge" [ngClass]="job.has_quiz ? (job.quiz_is_active ? 'bg-green' : 'bg-gray') : 'bg-gray'">
+                  {{ getQuizBadge(job) }}
+                </span>
+              </td>
+              <td>
+                <div class="actions-cell">
+                  <button (click)="onManageQuiz(job)" class="btn-action btn-view" title="Gérer le quiz" style="color: #7c3aed;"><i class="bi bi-patch-question-fill"></i></button>
+                  <button (click)="onViewJob(job)" class="btn-action btn-view" title="Consulter"><i class="bi bi-eye-fill"></i></button>
+                  <button (click)="onToggleStatus(job)" class="btn-action btn-toggle" title="Masquer/Afficher"><i class="bi" [ngClass]="job.status === 'disponible' || job.status === 'Actif' ? 'bi-eye-slash-fill' : 'bi-check-circle-fill'"></i></button>
+                  <button (click)="onDeleteJob(job.id)" class="btn-action btn-delete" title="Supprimer"><i class="bi bi-trash3-fill"></i></button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 🎚️ BLOC DE PAGINATION PREMIUM -->
+    @if (totalPages > 1) {
+      <div class="pagination-container">
+        <span class="pagination-info">
+          Page <strong>{{ currentPage }}</strong> sur {{ totalPages }} ({{ filteredJobs.length }} offres au total)
+        </span>
+        <div class="pagination-buttons">
+          <button (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1" class="btn-page-nav">
+            <i class="bi bi-chevron-left"></i> Précédent
+          </button>
+          
+          <button (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages" class="btn-page-nav">
+            Suivant <i class="bi bi-chevron-right"></i>
+          </button>
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- 🎛️ MODALE DE CONSULTATION AVEC BADGES DYNAMIQUES -->
+  @if (selectedJob) {
+    <div class="modal-overlay" (click)="onCloseModal()">
+      <div class="modal-card" (click)="$event.stopPropagation()">
+        
+        <!-- En-tête -->
+        <div class="modal-header">
+          <h3><i class="bi bi-file-earmark-text-fill"></i> {{ selectedJob.title }}</h3>
+          <button (click)="onCloseModal()" class="btn-close-modal"><i class="bi bi-x-lg"></i></button>
+        </div>
+
+        <!-- Corps -->
+        <div class="modal-body">
+          
+          <!-- 📊 Grille Horizontale des Métadonnées -->
+          <div class="job-meta-header-grid">
+            <div class="meta-card-item">
+              <span class="meta-card-label"><i class="bi bi-file-earmark-text"></i> Contrat</span>
+              <strong class="meta-card-value badge-contract-premium">{{ selectedJob.contract_type || 'CDI' }}</strong>
+            </div>
+            <div class="meta-card-item">
+              <span class="meta-card-label"><i class="bi bi-geo-alt"></i> Lieu</span>
+              <strong class="meta-card-value">{{ selectedJob.location }} ({{ selectedJob.workplace_type || 'Présentiel' }})</strong>
+            </div>
+            <div class="meta-card-item">
+              <span class="meta-card-label"><i class="bi bi-cash-stack"></i> Salaire</span>
+              <strong class="meta-card-value value-salary">{{ selectedJob.salary || 'Non spécifié' }}</strong>
+            </div>
+            <div class="meta-card-item">
+              <span class="meta-card-label"><i class="bi bi-mortarboard"></i> Expérience</span>
+              <strong class="meta-card-value">{{ selectedJob.experience_level || 'Tous niveaux' }}</strong>
+            </div>
+          </div>
+
+          <!-- 🎯 Section Missions -->
+          <div class="job-display-section">
+            <h4 class="section-display-title"><i class="bi bi-list-task"></i> Missions principales</h4>
+            <div class="display-text-card">
+              <p class="formatted-pre-line">{{ selectedJob.missions_desc }}</p>
+            </div>
+          </div>
+
+          <!-- 👤 Section Profil recherché -->
+          <div class="job-display-section">
+            <h4 class="section-display-title"><i class="bi bi-person-badge-fill"></i> Profil recherché & Exigences</h4>
+            <div class="display-text-card">
+              <p class="formatted-pre-line">{{ selectedJob.profile_desc }}</p>
+            </div>
+          </div>
+
+          <!-- 🏷️ Section Compétences clés -->
+          @if (selectedJob.skills_desc) {
+            <div class="job-display-section">
+              <h4 class="section-display-title"><i class="bi bi-tags-fill"></i> Compétences clés & Technologies</h4>
+              <div class="display-text-card">
+                <div class="skills-badge-display-grid">
+                  @for (skill of getJobSkillsArray(selectedJob.skills_desc); track $index) {
+                    <span class="premium-skill-tag">
+                      <i class="bi bi-check2"></i> {{ skill }}
+                    </span>
+                  }
+                </div>
+              </div>
+            </div>
+          }
+
+          <!-- 🌐 Section Langues exigées -->
+          @if (selectedJob.languages_desc) {
+            <div class="job-display-section">
+              <h4 class="section-display-title"><i class="bi bi-translate"></i> Langues exigées</h4>
+              <div class="display-text-card">
+                <div class="skills-badge-display-grid">
+                  @for (lang of getJobLanguagesArray(selectedJob.languages_desc); track $index) {
+                    <span class="premium-lang-tag">
+                      <i class="bi bi-globe"></i> {{ lang }}
+                    </span>
+                  }
+                </div>
+              </div>
+            </div>
+          }
+
+        </div>
+
+      </div>
+    </div>
+  }
+
+  <!-- Modale gestion quiz -->
+  @if (quizManageJob) {
+    <div class="modal-overlay" (click)="onCloseQuizModal()">
+      <div class="modal-card" (click)="$event.stopPropagation()" style="max-width: 720px; max-height: 90vh; overflow-y: auto;">
+        <div class="modal-header">
+          <h3><i class="bi bi-patch-question-fill" style="color: #7c3aed;"></i> Quiz — {{ quizManageJob.title }}</h3>
+          <button (click)="onCloseQuizModal()" class="btn-close-modal"><i class="bi bi-x-lg"></i></button>
+        </div>
+        <div class="modal-body">
+          @if (quizMessage) {
+            <p style="font-size: 13px; color: #0369a1; background: #e0f2fe; padding: 10px; border-radius: 8px;">{{ quizMessage }}</p>
+          }
+          <app-quiz-builder
+            [enabled]="hasQuizEdit"
+            [hideActivationToggle]="true"
+            [quizTitle]="quizTitle"
+            [questions]="quizQuestions"
+            [isActive]="quizIsActive"
+            [showManageActions]="true"
+            [isSaving]="isSavingQuiz"
+            (enabledChange)="onQuizEnabledChange($event)"
+            (quizTitleChange)="quizTitle = $event"
+            (questionsChange)="quizQuestions = $event"
+            (save)="saveQuiz()"
+            (toggleVisibility)="toggleQuizVisibility($event)"
+          />
+        </div>
+      </div>
+    </div>
+  }
+
+</div>

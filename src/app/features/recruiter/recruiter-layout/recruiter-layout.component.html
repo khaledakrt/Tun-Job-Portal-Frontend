@@ -1,0 +1,269 @@
+<div class="app-container">
+  
+  <!-- 🧭 SIDEBAR COMPLÈTE & PROFESSIONNELLE SÉCURISÉE -->
+  <aside class="app-sidebar">
+    <div class="sidebar-brand">
+      <div class="logo-icon"><i class="bi bi-rocket-takeoff-fill"></i></div>
+      <div class="logo-text">Tun<span>Job</span> Pro</div>
+    </div>
+
+    <!-- 👤 BLOC PROFIL DYNAMIQUE UNIQUE : Connecté au statut de modération Admin -->
+    <div class="recruiter-profile-summary">
+      <div class="avatar-circle">
+        <img [src]="recruiterAvatar ? assetsUrl + '/logos/' + recruiterAvatar : 'assets/images/default-avatar.png'" 
+             (error)="$any($event.target).src='assets/images/default-avatar.png'"
+             alt="Logo Recruteur">
+      </div>
+
+      <div class="profile-info">
+        <h4 class="company-name">{{ recruiterName }}</h4>
+        
+        <!-- 🔄 Bascule d'affichage en temps réel (Vert si vérifié, Orange si en attente) -->
+        @if (isVerifiedCompany) {
+          <span class="badge-status">
+            <span class="dot"></span> Compte Vérifié
+          </span>
+        } @else {
+          <span class="badge-status-pending">
+            <span class="dot"></span> En attente
+          </span>
+        }
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section-title">Recrutement</div>
+      
+      <a routerLink="/recruiter" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="nav-link-item">
+        <i class="bi bi-grid-1x2-fill"></i> Vue d'ensemble
+      </a>
+      
+      <a routerLink="/recruiter/create-job" routerLinkActive="active" class="nav-link-item">
+        <i class="bi bi-plus-circle-fill"></i> Publier une offre
+      </a>
+      
+      <a routerLink="/recruiter/job-manage" routerLinkActive="active" class="nav-link-item">
+        <i class="bi bi-briefcase-fill"></i> Gérer mes annonces
+      </a>
+      
+      <a routerLink="/recruiter/ats-pipeline" routerLinkActive="active" class="nav-link-item">
+        <i class="bi bi-people-fill"></i> Suivi Candidats (ATS)
+        <span class="nav-badge">14</span>
+      </a>
+
+      <div class="nav-section-title">Entreprise & Paramètres</div>
+      
+      <a routerLink="/recruiter/profile-settings" routerLinkActive="active" class="nav-link-item">
+        <i class="bi bi-sliders"></i> Configuration Profil & Logo
+      </a>
+
+      <a (click)="onLogout()" class="nav-link-item logout-item" style="cursor: pointer;">
+        <i class="bi bi-box-arrow-left"></i> Quitter la session
+      </a>
+    </nav>
+  </aside>
+
+  <!-- 💻 ZONE DE CONTENU PRINCIPALE DYNAMIQUE -->
+  <main class="app-main">
+    <header class="app-header">
+      <div class="header-welcome">
+        <h2>Bienvenue, <span class="highlight">{{ recruiterName }}</span> 👋</h2>
+        <p>Voici l'état actuel de vos campagnes de recrutement en Tunisie.</p>
+      </div>
+
+      <div class="header-actions">
+        <button routerLink="/recruiter/create-job" class="btn-quick-add">
+          <i class="bi bi-plus"></i> Nouvelle Annonce
+        </button>
+
+        <!-- 🚀 INJECTION DU CENTRE DE NOTIFICATIONS AUTONOME & PARTAGÉ -->
+        <app-notification-center></app-notification-center>
+      </div>
+    </header>
+
+    <!-- Zone d'injection principale pour les formulaires et listes -->
+    <div class="content-body">
+      <router-outlet></router-outlet>
+    </div>
+  </main>
+
+  <!-- 🎛️ MODAL COPIÉE DE L'ATS KANBAN - EN SURIMPRESSION AU PREMIER PLAN -->
+  <div *ngIf="selectedDirectCandidate" class="modal-overlay" (click)="closeModal()">
+    <div class="modal-content recruiter-modal-content" (click)="$event.stopPropagation()">
+        
+        <!-- En-tête -->
+        <div class="modal-header">
+          <h3>Candidature de {{ selectedDirectCandidate.name }}</h3>
+          <button class="close-btn" (click)="closeModal()">&times;</button>
+        </div>
+
+        <!-- Corps des détails avec intégration de l'avatar -->
+        <div class="modal-body">
+          <details class="ats-section-card" open>
+            <summary class="ats-section-summary">
+              <span><i class="bi bi-person-vcard-fill"></i> Profil candidat</span>
+              <i class="bi bi-chevron-down"></i>
+            </summary>
+
+            <div class="ats-section-content">
+              <div class="candidate-top-row">
+                <div class="candidate-photo-block">
+                  <div style="width: 85px; height: 85px; border-radius: 50%; border: 1px solid #cbd5e1; overflow: hidden; background: #ffffff; display: flex; align-items: center; justify-content: center;">
+                    <img [src]="selectedDirectCandidate.avatar_logo ? assetsUrl + '/logos/' + selectedDirectCandidate.avatar_logo : 'assets/images/default-avatar.png'" 
+                         (error)="$any($event.target).src='assets/images/default-avatar.png'"
+                         alt="Photo du candidat"
+                         style="width: 100%; height: 100%; object-fit: cover;">
+                  </div>
+
+                  <button (click)="openCandidateCV(selectedDirectCandidate.candidate_id)"
+                          [disabled]="!selectedDirectCandidate.cv_summary || selectedDirectCandidate.cv_summary.trim() === ''"
+                          [class.disabled-button]="!selectedDirectCandidate.cv_summary || selectedDirectCandidate.cv_summary.trim() === ''"
+                          class="btn-cv-view"
+                          style="cursor: pointer;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" fill="currentColor" viewBox="0 0 16 16">
+                      <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2M9.5 1A1.5 1.5 0 0 1 11 2.5V4h3v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1z"/>
+                    </svg>
+                    {{ selectedDirectCandidate.cv_summary && selectedDirectCandidate.cv_summary.trim() !== '' ? 'Consulter le CV' : 'Aucun CV' }}
+                  </button>
+                </div>
+
+                <div class="candidate-summary-grid">
+                  <div class="candidate-summary-item">
+                    <span class="info-label">Poste ciblé:</span>
+                    <span class="info-value">{{ selectedDirectCandidate.job_title }}</span>
+                  </div>
+                  <div class="candidate-summary-item">
+                    <span class="info-label">Date candidature:</span>
+                    <span class="info-value">
+                      {{ selectedDirectCandidate?.created_at 
+                        ? (selectedDirectCandidate.created_at | date:'dd/MM/yyyy à HH:mm') 
+                        : (selectedDirectCandidate?.applied_at 
+                            ? (selectedDirectCandidate.applied_at | date:'dd/MM/yyyy à HH:mm') 
+                            : '—') }}
+                    </span>
+                  </div>
+                  <div class="candidate-summary-item">
+                    <span class="info-label">Adresse e-mail:</span>
+                    <span class="info-value">{{ selectedDirectCandidate.email }}</span>
+                  </div>
+                  <div class="candidate-summary-item">
+                    <span class="info-label">Téléphone:</span>
+                    <span class="info-value">{{ selectedDirectCandidate.phone || 'Non renseigné' }}</span>
+                  </div>
+                  <div class="candidate-summary-item">
+                    <span class="info-label">Ville / Région:</span>
+                    <span class="info-value">{{ selectedDirectCandidate.address || 'Non spécifiée' }}</span>
+                  </div>
+                  <div class="candidate-summary-item">
+                    <span class="info-label">Contrat souhaité:</span>
+                    <span class="info-value">{{ selectedDirectCandidate.job_type || 'Non renseigné' }}</span>
+                  </div>
+                  <div class="candidate-summary-item">
+                    <span class="info-label">Situation actuelle:</span>
+                    <span class="info-value">{{ selectedDirectCandidate.job_status || 'Non renseignée' }}</span>
+                  </div>
+                  <div class="candidate-summary-item">
+                    <span class="info-label">Date de naissance:</span>
+                    <span class="info-value">{{ selectedDirectCandidate.birth_date ? (selectedDirectCandidate.birth_date | date:'dd/MM/yyyy') : 'Non renseignée' }}</span>
+                  </div>
+                  <div class="candidate-summary-item">
+                    <span class="info-label">Disponibilité:</span>
+                    <span class="info-value">{{ selectedDirectCandidate.availability || 'Non renseignée' }}</span>
+                  </div>
+                  <div class="candidate-summary-item">
+                    <span class="info-label">Réseaux:</span>
+                    <span class="info-value">
+                      <ng-container *ngIf="selectedDirectCandidate.linkedin && selectedDirectCandidate.linkedin.trim() !== ''">
+                        <a [href]="selectedDirectCandidate.linkedin" target="_blank">LinkedIn</a>
+                      </ng-container>
+                      <ng-container *ngIf="selectedDirectCandidate.github && selectedDirectCandidate.github.trim() !== ''">
+                        <span class="network-separator">|</span>
+                        <a [href]="selectedDirectCandidate.github" target="_blank">GitHub</a>
+                      </ng-container>
+                      <span *ngIf="(!selectedDirectCandidate.linkedin || selectedDirectCandidate.linkedin.trim() === '') && (!selectedDirectCandidate.github || selectedDirectCandidate.github.trim() === '')" class="detail-empty">Non renseigné</span>
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="summary-box" style="margin-top: 15px; padding: 16px; background: #f8fafc; border-radius: 8px; border-left: 4px solid #0ea5e9;">
+                <span class="summary-title" style="color: #0f172a; font-weight: 700; font-size: 13px; display: block; margin-bottom: 8px;">
+                  Résumé du profil & Compétences clés
+                </span>
+                <p class="summary-text" style="margin: 0; color: #475569; font-size: 13px; line-height: 1.6; white-space: pre-line;">
+                  {{ selectedDirectCandidate.cv_summary || "Le candidat n'a pas encore rédigé de présentation de profil sur son espace TunJob." }}
+                </p>
+              </div>
+            </div>
+          </details>
+
+          @if (selectedDirectCandidate.has_quiz) {
+            <details class="notif-quiz-accordion" style="margin-top: 14px;">
+              <summary class="notif-quiz-summary">
+                <span><i class="bi bi-patch-question-fill"></i> Réponses au quiz</span>
+                <span class="quiz-title-inline">{{ selectedDirectCandidate.quiz_title || 'Quiz de présélection' }}</span>
+              </summary>
+
+              @if (selectedDirectCandidate.quiz_answers?.length) {
+                <div class="notif-quiz-list">
+                  @for (answer of selectedDirectCandidate.quiz_answers; track answer.question_id; let i = $index) {
+                    <div class="notif-quiz-item" [class.correct]="answer.is_correct" [class.incorrect]="!answer.is_correct">
+                      <div class="notif-quiz-question">
+                        <span class="notif-quiz-number">Q{{ i + 1 }}</span>
+                        {{ answer.question_text }}
+                      </div>
+                      <div class="notif-quiz-answer">
+                        {{ answer.selected_choice_text }}
+                      </div>
+                    </div>
+                  }
+                </div>
+              } @else {
+                <p class="notif-quiz-empty">Aucune réponse quiz disponible pour cette candidature.</p>
+              }
+            </details>
+          }
+        </div>
+
+        <!-- ================= PIED DE PAGE ATS UNIFIÉ ET CENTRÉ ================= -->
+        <div class="modal-footer" style="display: flex !important; align-items: center !important; justify-content: space-between !important; gap: 20px !important; margin-top: 25px; border-top: 1px solid #f1f5f9; padding-top: 16px; width: 100% !important; box-sizing: border-box !important;">
+          <div style="display: flex !important; gap: 8px !important; flex-wrap: wrap !important; flex-grow: 1 !important;">
+            <!-- 1. Bouton Accepter (Vert) -->
+            <button type="button" 
+                    (click)="changeCandidateStatus(selectedDirectCandidate.application_id, 'Proposition')" 
+                    style="background: #10b981; color: white; border: none; padding: 8px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: background 0.2s;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/></svg>
+              Accepter
+            </button>
+
+            <!-- 2. Bouton En attente (Gris Ardoise) -->
+            <button type="button" 
+                    (click)="changeCandidateStatus(selectedDirectCandidate.application_id, 'Nouveau')" 
+                    style="background: #64748b; color: white; border: none; padding: 8px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: background 0.2s;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 0 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/><path d="M5 6.25a1.25 1.25 0 1 1 2.5 0v3.5a1.25 1.25 0 1 1-2.5 0zm4 0a1.25 1.25 0 1 1 2.5 0v3.5a1.25 1.25 0 1 1-2.5 0z"/></svg>
+              En attente
+            </button>
+            
+            <!-- 3. Bouton Entretien Technique (Orange) -->
+            <button type="button" 
+                    (click)="changeCandidateStatus(selectedDirectCandidate.application_id, 'Entretien')" 
+                    style="background: #f97316; color: white; border: none; padding: 8px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: background 0.2s;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16"><path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0m-8.5-4.5A.5.5 0 0 1 7 4v3.5h2.5a.5.5 0 0 1 0 1H6.5a.5.5 0 0 1-.5-.5V4a.5.5 0 0 1 .5-.5"/></svg>
+              Entretien
+            </button>
+
+            <!-- 4. Bouton Rejeter (Rouge) -->
+            <button type="button" 
+                    (click)="changeCandidateStatus(selectedDirectCandidate.application_id, 'Rejete')" 
+                    style="background: #ef4444; color: white; border: none; padding: 8px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: background 0.2s;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293z"/></svg>
+              Rejeter
+            </button>
+          </div>
+          <button class="btn-secondary" (click)="closeModal()" style="padding: 8px 16px !important; font-size: 12px !important; font-weight: 600 !important; cursor: pointer !important; flex-shrink: 0 !important; margin: 0 !important;">Fermer</button>
+        </div>
+
+    </div>
+  </div>
+
+</div>

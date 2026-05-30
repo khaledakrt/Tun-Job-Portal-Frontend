@@ -1,0 +1,41 @@
+@if (loading) {
+  <div class="quiz-player-card">
+    <div class="quiz-loading">
+      <i class="bi bi-arrow-repeat"></i>
+      Chargement du questionnaire…
+    </div>
+  </div>
+} @else if (quiz?.questions?.length) {
+  <div class="quiz-player-card">
+    <div class="quiz-player-header">
+      <div class="quiz-player-icon"><i class="bi bi-ui-checks-grid"></i></div>
+      <div>
+        <h4>{{ quiz?.title || 'Quiz de présélection' }}</h4>
+        <p>Répondez à toutes les questions avant de postuler</p>
+      </div>
+      <span class="quiz-progress">{{ answeredCount }}/{{ totalQuestions }}</span>
+    </div>
+
+    @for (q of quiz?.questions; track q.id; let qi = $index) {
+      <div class="question-block">
+        <p class="question-label">
+          <span class="question-index">{{ qi + 1 }}</span>
+          <span>{{ q.question_text }}</span>
+        </p>
+        <div class="choices-grid">
+          @for (c of q.choices; track c.id; let ci = $index) {
+            <button
+              type="button"
+              class="choice-option"
+              [class.selected]="isSelected(q.id, c.id)"
+              (click)="selectAnswer(q.id, c.id)"
+            >
+              <span class="choice-letter">{{ choiceLetter(ci) }}</span>
+              <span>{{ c.choice_text }}</span>
+            </button>
+          }
+        </div>
+      </div>
+    }
+  </div>
+}

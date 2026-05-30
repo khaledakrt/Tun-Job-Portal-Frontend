@@ -1,0 +1,28 @@
+ 
+<div *ngIf="isOpen" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 font-sans text-xs">
+  <div class="bg-white rounded-2xl max-w-2xl w-full p-8 shadow-2xl border border-slate-100 space-y-5 animate-fadeIn">
+    <div class="flex items-center space-x-4 border-b pb-4">
+      <div class="w-16 h-16 bg-slate-50 rounded-full border flex items-center justify-center overflow-hidden shrink-0 shadow-inner">
+        <img *ngIf="company?.logo" [src]="company.logo" class="w-full h-full object-cover">
+        <span *ngIf="!company?.logo" class="text-3xl">🏢</span>
+      </div>
+      <div class="min-w-0 flex-1 space-y-1">
+        <h3 class="text-xl font-bold text-slate-900 truncate tracking-wide">{{ company?.name }}</h3>
+        <div class="inline-flex items-center text-xs font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-100">
+          <span>📍</span> <span class="truncate ml-1">{{ company?.address || 'Non spécifiée' }}</span>
+        </div>
+      </div>
+      <button (click)="onClose()" class="text-slate-400 hover:text-slate-600 font-bold text-lg p-1 outline-none">✕</button>
+    </div>
+    <div class="space-y-2">
+      <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center">🏢 À propos de l'établissement</h4>
+      <p class="text-sm text-slate-600 leading-relaxed text-justify bg-slate-50 p-4 rounded-xl border max-h-40 overflow-y-auto whitespace-pre-line break-words">
+        {{ company?.bio || 'Aucune description rédigée.' }}
+      </p>
+    </div>
+    <div class="bg-slate-50 border p-3 rounded-xl flex items-center justify-between text-sm">
+      <span class="text-slate-500 font-medium">📞 Coordonnées de contact :</span>
+      <span class="text-slate-900 font-bold bg-white px-3 py-1 border rounded-lg shadow-sm">{{ company?.phone || 'Non spécifié' }}</span>
+    </div>
+  </div>
+</div>

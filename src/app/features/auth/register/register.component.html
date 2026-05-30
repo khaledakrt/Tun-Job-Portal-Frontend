@@ -1,0 +1,54 @@
+<div class="register-container">
+  <div class="register-card">
+    <div class="register-header">
+      <h2 class="brand-title">Tun<span>Job</span> Portal</h2>
+      <p class="brand-subtitle">Créez votre compte gratuitement pour nous rejoindre</p>
+    </div>
+
+    <!-- 🟢 BOX SUCCÈS : Apparaît uniquement en cas de réussite totale -->
+    <div *ngIf="showSuccessMessage" class="alert-box alert-success">
+      🎉 Compte créé avec succès ! <br>
+      Redirection automatique dans <strong>{{ countdown }}</strong> secondes...
+    </div>
+
+    <!-- 🔴 BOX ERREUR : Apparaît en cas de problème de saisie ou de doublon -->
+    <div *ngIf="errorMessage" class="alert-box alert-error">
+      ⚠️ {{ errorMessage }}
+    </div>
+
+    <!-- Le formulaire reste visible en cas d'erreur pour permettre la correction -->
+    <form *ngIf="!showSuccessMessage" (ngSubmit)="onSubmit($event)" class="register-form">
+      <div class="form-group">
+        <label for="name">Nom complet</label>
+        <input type="text" id="name" name="name" [(ngModel)]="user.name" placeholder="Flen Ben Flen" required>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Adresse e-mail</label>
+        <input type="email" id="email" name="email" [(ngModel)]="user.email" placeholder="exemple@domaine.tn" required>
+      </div>
+
+      <div class="form-group">
+        <label for="role">Type de profil</label>
+        <select id="role" name="role" [(ngModel)]="user.role" class="form-select">
+          <option value="candidate">Candidat (Recherche d'emploi)</option>
+          <option value="recruiter">Recruteur (Recrutement d'entreprises)</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Mot de passe</label>
+        <input type="password" id="password" name="password" [(ngModel)]="user.password" placeholder="••••••••" minlength="8" required>
+        <small style="font-size: 12px; color: #64748b;">Minimum 8 caractères</small>
+      </div>
+
+      <button type="submit" class="btn-submit">Créer mon compte</button>
+    </form>
+
+        <div class="register-footer">
+      <!-- 🟢 Correction avec routerLink pour forcer la page login -->
+      <p>Déjà inscrit ? <a routerLink="/login" style="cursor: pointer; color: #0ea5e9; font-weight: 600; text-decoration: none;">Se connecter</a></p>
+    </div>
+
+  </div>
+</div>

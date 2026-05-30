@@ -1,0 +1,670 @@
+.job-search-container {
+  animation: fadeIn 0.2s ease-out;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 30px 40px;
+}
+
+/* 🔍 CONTENEUR RECHERCHE AVANCÉE EN GRILLE COMPACTE */
+.search-advanced-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.advanced-search-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr) !important; /* Aligne les 4 critères côte à côte */
+  gap: 16px;
+  width: 100%;
+}
+
+.search-filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-align: left;
+}
+
+.search-filter-group label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.input-with-icon {
+  position: relative;
+  width: 100%;
+}
+
+.input-with-icon i {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #94a3b8;
+  font-size: 14px;
+}
+
+.input-with-icon input, .select-filter-compact {
+  width: 100% !important;
+  padding: 9px 12px 9px 34px !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 6px !important;
+  font-size: 13px !important;
+  color: #1e293b !important;
+  background-color: #f8fafc !important;
+  box-sizing: border-box;
+}
+
+.select-filter-compact {
+  padding: 9px 12px !important; /* Pas d'icône interne nécessaire pour les listes déroulantes */
+  cursor: pointer;
+}
+
+.input-with-icon input:focus, .select-filter-compact:focus {
+  background-color: #ffffff !important;
+  border-color: #0ea5e9 !important;
+  outline: none !important;
+}
+
+/* Bouton réinitialiser */
+.reset-filters-row {
+  display: flex;
+  justify-content: flex-end;
+}
+.btn-reset-filters {
+  background: none;
+  border: none;
+  color: #ef4444;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.btn-reset-filters:hover { text-decoration: underline; }
+
+/* 🚀 GRILLE À 3 COLONNES SANS SCROLL */
+.jobs-cards-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
+  gap: 16px;
+  width: 100%;
+}
+
+/* 🌟 TAILLE ÉLARGIE POUR L'UTILISATEUR CONNECTÉ (Candidat) */
+/* En augmentant le minmax à 360px, on obtient environ 4 colonnes sur un écran large 
+   tout en rendant les cartes plus lisibles et spacieuses. */
+.jobs-cards-grid-3.logged-in-grid {
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)) !important;
+  gap: 24px; /* Un peu plus d'espace entre les grandes cartes */
+}
+
+
+.job-feed-card {
+  background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; display: flex; flex-direction: column; text-align: left; box-shadow: 0 1px 3px rgba(0,0,0,0.01); box-sizing: border-box;
+}
+
+.card-top-info { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.company-logo-placeholder { width: 38px; height: 38px; border-radius: 8px; border: 1px solid #e2e8f0; background: #f8fafc; display: flex; justify-content: center; align-items: center; overflow: hidden; }
+.company-logo-placeholder img { width: 100%; height: 100%; object-fit: cover; }
+
+.job-title-block { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+.feed-job-title { margin: 0; color: #0f172a; font-size: 14px; font-weight: 700; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
+.feed-company-name { font-size: 12px; color: #64748b; margin-top: 1px; }
+.contract-badge-feed { background: #f0f9ff; color: #0ea5e9; font-size: 11px; font-weight: 700; padding: 3px 6px; border-radius: 4px; }
+
+.card-mid-meta { display: flex; flex-wrap: wrap; gap: 4px 8px; margin-bottom: 10px; }
+.meta-item { font-size: 12px; color: #64748b; font-weight: 500; display: inline-flex; align-items: center; gap: 4px; }
+.salary-tag { color: #10b981; font-weight: 600; }
+
+.job-short-desc { margin: 0 0 10px 0; font-size: 12.5px; color: #475569; line-height: 1.4; flex: 1; }
+
+.card-bottom-actions { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f1f5f9; padding-top: 10px; gap: 8px; }
+.btn-consult-job { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; border-radius: 6px; padding: 7px 12px; font-size: 12.5px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; }
+.btn-apply-now { background: #0ea5e9; color: #ffffff; border: none; border-radius: 6px; padding: 8px 14px; font-size: 12.5px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; }
+.badge-already-applied { background: #f1f5f9; color: #64748b; border: 1px solid #e2e8f0; font-size: 12px; font-weight: 600; padding: 7px 12px; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; }
+
+/* 🌟 INTERACTION RECRUTEUR */
+.clickable-recruiter {
+  cursor: pointer !important;
+  transition: all 0.2s ease;
+}
+
+.clickable-recruiter:hover {
+  color: #0ea5e9 !important;
+  opacity: 0.8;
+  text-decoration: none;
+}
+
+/* ==========================================================================
+   🕋 COUCHE DE DESIGN MODALE ACCORDION
+   ========================================================================== */
+
+/* Styles pour la modale de l'offre d'emploi */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(15, 23, 42, 0.4);
+  backdrop-filter: blur(4px);
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-card {
+  background: #ffffff;
+  max-width: 1000px; /* Augmentation de la largeur pour le confort */
+  width: 100%;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  max-height: 90vh; /* Utilise 90% de la hauteur de l'écran maximum */
+  animation: slideUp 0.3s ease-out;
+}
+
+.modal-header {
+  padding: 12px 20px;
+  border-bottom: 1px solid #5ab4f0;
+  background-color: #5ab4f0;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 500;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+
+.btn-close-modal {
+  background: #f1f5f9;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  color: #64748b;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+.btn-close-modal:hover {
+  background: #fee2e2;
+  color: #ef4444;
+}
+
+.modal-body {
+  padding: 20px;
+  overflow-y: auto;
+  flex-grow: 1; /* Permet au corps de prendre tout l'espace et d'activer le scroll */
+  min-height: 0; /* Nécessaire pour forcer le scrollbar interne sur certains navigateurs */
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Scrollbar Premium stylisée */
+.modal-body::-webkit-scrollbar { width: 8px; }
+.modal-body::-webkit-scrollbar-track { background: #f8fafc; }
+.modal-body::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; border: 2px solid #f8fafc; }
+.modal-body::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+/* COMPANY HERO HEADER */
+.job-hero-section {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+.job-logo-wrapper {
+  width: 56px;
+  height: 56px;
+  background-color: #fbfbfb;
+  color: #ffffff;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.job-logo-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.job-main-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 2px;
+}
+.job-company-link { /* Renommé de company-name pour correspondre à l'HTML */
+  color: #2563eb;
+  font-weight: 600;
+  font-size: 13px;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+/* METADATA BADGES */
+.job-badges-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.premium-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: 9999px;
+}
+.badge-salary { color: #166534; border: 1px solid #dcfce7; background: #f0fdf4; }
+.badge-contract { color: #6b21a8; border: 1px solid #f3e8ff; background: #faf5ff; }
+.badge-location { color: #1e40af; border: 1px solid #dbeafe; background: #eff6ff; }
+.badge-expiration { color: #9a3412; border: 1px solid #ffedd5; background: #fff7ed; }
+.badge-experience { color: #374151; background: #f3f4f6; }
+
+/* ACCORDION MENU TOGGLE BUTTONS */
+.ats-section-card { /* Conteneur pour <details> */
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  margin-top: 12px;
+  overflow: visible; /* Empêche le tag details de couper les questions qui dépassent sa hauteur initiale */
+}
+.ats-section-summary {
+  width: 100%;
+  background-color: #f9fafb;
+  border: none; /* La bordure est sur .ats-section-card */
+  padding: 12px 16px;
+  border-radius: 8px; /* Sera écrasé par .ats-section-card border-radius */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 700;
+  color: #111827;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  list-style: none; /* Supprime le marqueur par défaut de <summary> */
+}
+.ats-section-summary::-webkit-details-marker {
+  display: none; /* Pour Chrome/Safari */
+}
+.ats-section-summary:hover {
+  background-color: #f3f4f6;
+}
+.accordion-icon {
+  font-size: 12px;
+  transition: transform 0.2s;
+}
+.ats-section-card[open] .accordion-icon {
+  transform: rotate(180deg);
+}
+
+/* ACCORDION CONTENT BOXES */
+.ats-section-card:not([open]) .ats-section-content {
+  max-height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.ats-section-card[open] .ats-section-content {
+  max-height: none !important; /* Retire toute limite de hauteur pour garantir que 100% du contenu est visible */
+  overflow: visible !important;
+  height: auto !important;
+}
+
+.ats-section-content {
+  overflow: visible; /* Changé de hidden à visible pour éviter tout rognage de texte */
+  transition: max-height 0.3s ease-out, padding 0.3s ease;
+  padding: 16px 10px; /* Ajusté pour correspondre à l'exemple */
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Griser et désactiver le quiz si déjà postulé */
+.quiz-disabled {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* CONTENT SECTIONS Inside Accordion */
+.job-text-block-section { /* Conteneur pour les sections de texte */
+  display: flex;
+  flex-direction: column;
+  gap: 6px; /* Réduit le gap pour les titres et paragraphes */
+  text-align: left;
+}
+.section-title { /* Renommé de job-block-title */
+  font-size: 15px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.section-title::before {
+  content: "";
+  display: inline-block;
+  width: 3px;
+  height: 14px;
+  background-color: #2563eb;
+  border-radius: 2px;
+}
+.job-block-card { /* Conteneur pour le texte de la section */
+  background: transparent; /* Pas de fond blanc */
+  border: none; /* Pas de bordure */
+  padding: 0; /* Pas de padding sur la carte elle-même */
+}
+.job-block-card p {
+  color: #4b5563;
+  font-size: 13px;
+  line-height: 1.5;
+  padding-left: 10px; /* Indentation pour le texte */
+  white-space: pre-line;
+  margin: 0;
+}
+
+/* SKILLS GRID */
+.skills-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  background-color: #f9fafb;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #f3f4f6;
+}
+@media (min-width: 480px) {
+  .skills-grid { grid-template-columns: 1fr 1fr; }
+}
+.skills-block h3 {
+  font-size: 11px;
+  font-weight: 700;
+  color: #4b5563;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.tags-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.tag {
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  color: #374151;
+  padding: 3px 8px;
+  font-size: 11px;
+  font-weight: 500;
+  border-radius: 6px;
+}
+
+/* QUIZ SPECIFIC */
+.quiz-info-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #6b7280;
+  margin-bottom: 12px;
+  background: #eff6ff;
+  padding: 8px 12px;
+  border-radius: 6px;
+}
+.quiz-progress {
+  font-weight: 700;
+  color: #1d4ed8;
+}
+.question-item {
+  margin-bottom: 16px;
+}
+.question-text {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 8px;
+}
+.question-text span { color: #2563eb; }
+.options-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 6px;
+}
+@media (min-width: 520px) {
+  .options-grid { grid-template-columns: repeat(3, 1fr); }
+}
+.option-card {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  color: #374151;
+  transition: all 0.2s;
+}
+.option-card input { accent-color: #2563eb; }
+.option-card.selected { /* Style pour l'option sélectionnée */
+  border-color: #2563eb;
+  background-color: #eff6ff;
+}
+
+/* FOOTER STATUS */
+.modal-footer-action-row {
+  border-top: 1px solid #f3f4f6;
+  background-color: #fffbeb;
+  padding: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  color: #92400e;
+  font-size: 13px;
+  font-weight: 600;
+}
+.premium-applied-banner {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.btn-submit-apply-large {
+  background-color: #2563eb;
+  color: #ffffff;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-submit-apply-large:hover {
+  background-color: #1d4ed8;
+}
+
+/* Arrière-plan flouté et assombri de force au premier plan */
+.custom-modal-overlay-auth {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(15, 23, 42, 0.4);
+  backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* 🟢 MODIFICATION : On applique un z-index maximal pour passer devant la grande carte des détails */
+  z-index: 999999 !important;
+}
+
+.custom-modal-box-auth {
+  background: #ffffff;
+  width: 100%;
+  max-width: 440px;
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  text-align: center;
+  animation: slideUp 0.3s ease-out;
+}
+
+.custom-modal-header-auth {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.login-icon-ats {
+  font-size: 48px;
+  color: #2563eb;
+  background: #eff6ff;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.custom-modal-header-auth h3 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.custom-modal-body-auth p {
+  font-size: 14.5px;
+  color: #475569;
+  line-height: 1.6;
+  margin: 0 0 12px 0;
+}
+
+.sub-text-auth {
+  font-size: 13px !important;
+  color: #2563eb !important;
+  font-weight: 600;
+  background: #f0f7ff;
+  padding: 8px;
+  border-radius: 8px;
+}
+
+.custom-modal-footer-auth {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-modal-cancel-auth {
+  flex: 1;
+  background: #f1f5f9;
+  color: #475569;
+  border: none;
+  padding: 12px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-modal-cancel-auth:hover { background: #e2e8f0; }
+
+.btn-modal-confirm-auth {
+  flex: 1;
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
+}
+.btn-modal-confirm-auth:hover { background: #1d4ed8; transform: translateY(-1px); }
+
+/* ==========================================================================
+   🏢 DESIGN SPÉCIFIQUE FICHE RECRUTEUR (MODALE 2)
+   ========================================================================== */
+.recruiter-profile-card {
+  max-width: 720px !important; /* Taille optimale pour une fiche entreprise */
+}
+
+.recruiter-hero-section {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  margin-bottom: 12px;
+  padding: 10px 0 20px 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.recruiter-logo-wrapper {
+  width: 80px;
+  height: 80px;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.recruiter-logo-wrapper img { width: 100%; height: 100%; object-fit: contain; padding: 5px; }
+
+.recruiter-meta-content { flex: 1; display: flex; flex-direction: column; align-items: flex-start; }
+
+.recruiter-main-title { font-size: 22px; font-weight: 800; color: #0f172a; margin: 0; text-align: left; }
+
+.recruiter-verified-badge {
+  display: inline-flex; align-items: center; gap: 6px; background: #eff6ff; color: #2563eb;
+  padding: 4px 12px; border-radius: 9999px; font-size: 12px; font-weight: 700; border: 1px solid #dbeafe; margin-top: 6px;
+}
+
+.recruiter-contact-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 5px; }
+
+.contact-item {
+  background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px 16px; border-radius: 8px;
+  display: flex; justify-content: flex-start; align-items: center; font-size: 13px;
+  gap: 8px;
+}
+
+.contact-item.span-two { grid-column: span 2; }
+.contact-item strong { color: #64748b; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+.contact-item span { color: #1e293b; font-weight: 700; }
+
+.section-text { color: #4b5563; font-size: 13.5px; line-height: 1.6; padding-left: 10px; white-space: pre-line; }
+
+@keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }

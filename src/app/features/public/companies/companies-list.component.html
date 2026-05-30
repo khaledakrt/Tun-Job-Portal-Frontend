@@ -1,0 +1,36 @@
+    <div class="companies-page-container">
+      <div class="page-header">
+        <h2><i class="bi bi-building-check"></i> Nos Entreprises Partenaires</h2>
+        <p>Découvrez les sociétés qui recrutent activement les meilleurs talents en Tunisie sur TunJob.</p>
+      </div>
+
+      @if (isLoading) {
+        <div class="loading-box"><i class="bi bi-arrow-clockwise spin"></i> Chargement des partenaires...</div>
+      } @else {
+        <div class="companies-grid">
+          @for (company of companies; track company.id) {
+            <div class="company-card">
+              <div class="company-logo">
+                <img [src]="company.company_logo ? assetsUrl + '/logos/' + company.company_logo : 'assets/images/default-avatar.png'" 
+                     (error)="$any($event.target).src='assets/images/default-avatar.png'" alt="Logo">
+              </div>
+              <div class="company-info">
+                <h4>{{ company.company_name }}</h4>
+                <span class="location-badge"><i class="bi bi-geo-alt-fill"></i> {{ company.address || 'Tunisie' }}</span>
+                <p class="company-bio">{{ company.company_bio | slice:0:120 }}{{ company.company_bio?.length > 120 ? '...' : '' }}</p>
+              </div>
+              <div class="card-footer">
+                <a [href]="'mailto:' + company.email" class="btn-contact-public"><i class="bi bi-envelope"></i> Contact</a>
+              </div>
+            </div>
+          }
+        </div>
+
+        @if (companies.length === 0) {
+          <div class="empty-state">
+            <i class="bi bi-building-slash"></i>
+            <p>Aucune entreprise n'est encore répertoriée.</p>
+          </div>
+        }
+      }
+    </div>

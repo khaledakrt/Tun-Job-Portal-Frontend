@@ -1,0 +1,214 @@
+<div class="manage-container">
+
+  <!-- En-tête de la page -->
+  <div class="card-header-flex">
+    <div class="card-header-left">
+      <h3><i class="bi bi-file-earmark-check-fill"></i> Suivi de mes candidatures</h3>
+      <p>Consultez l'état d'avancement et les réponses des recruteurs pour vos postes postulés.</p>
+    </div>
+  </div>
+
+  <!-- 📋 CARTE DU TABLEAU DE SUIVI ASSAINIE -->
+  <div class="manage-card-premium">
+    <div class="table-wrapper-premium">
+      <table class="jobs-table-premium">
+        <thead>
+          <tr>
+            <th class="th-left-padding">Poste / Entreprise</th>
+            <th>Date d'envoi</th>
+            <th class="th-center-align">Statut</th>
+          </tr>
+        </thead>
+        <tbody>
+          
+          <!-- ⏳ État de chargement asynchrone -->
+          @if (isLoading) {
+            <tr>
+              <td colspan="3" style="text-align: center; padding: 30px; color: #64748b; font-weight: 500;">
+                <i class="bi bi-arrow-clockwise" style="display: inline-block; animation: spin 1s linear infinite; margin-right: 8px;"></i>
+                Chargement de votre historique de postulation...
+              </td>
+            </tr>
+          }
+
+          <!-- 🚫 Cas où le catalogue est vide -->
+          @if (!isLoading && historyList.length === 0) {
+            <tr>
+              <td colspan="3" style="text-align: center; padding: 40px; color: #64748b;">
+                <i class="bi bi-send-x-fill" style="font-size: 28px; display: block; margin-bottom: 8px; color: #cbd5e1;"></i>
+                Vous n'avez pas encore envoyé de candidatures.
+              </td>
+            </tr>
+          }
+
+          <!-- 🚀 RENDU DYNAMIQUE DES LIGNES MYSQL NETTOYÉES -->
+          @for (app of historyList; track app.job_id) {
+            <tr class="table-row-premium">
+  <td class="job-company-cell">
+    <!-- MODIFIÉ : Classe nettoyée et taille forcée à 14px pour le tableau -->
+    <span class="clickable-job-title" style="font-size: 14px !important; font-weight: 700;" (click)="onViewJobDetails(app)">
+      {{ app.job_title }}
+    </span>
+
+                <span class="company-sub-badge clickable-recruiter" (click)="onViewRecruiterProfile(app.recruiter_id)">
+                  <i class="bi bi-building-check"></i> {{ app.company_name }}
+                </span>
+              </td>
+              
+              <td class="date-text-cell-premium">
+                <div class="date-container-premium">
+                  <i class="bi bi-calendar3"></i> 
+                  <span>{{ app.applied_at | date:'dd/MM/yyyy' }}</span>
+                </div>
+              </td>
+              
+              <td class="status-cell-premium">
+                <span class="status-badge-fixed" [ngClass]="{
+                  'bg-amber': app.status === 'Nouveau' || app.status === 'en_attente',
+                  'bg-blue': app.status === 'Entretien',
+                  'bg-emerald': app.status === 'retenu' || app.status === 'Acceptée' || app.status === 'Proposition',
+                  'bg-red': app.status === 'refuse' || app.status === 'Refusée' || app.status === 'Rejete'
+                }">
+                  <span class="dot-status"></span>
+                  <span class="badge-text-span">
+                    {{ app.status === 'Nouveau' || app.status === 'en_attente' ? 'En attente' : app.status === 'retenu' || app.status === 'Acceptée' || app.status === 'Proposition' ? 'Retenu' : app.status === 'refuse' || app.status === 'Refusée' || app.status === 'Rejete' ? 'Refusé' : app.status }}
+                  </span>
+                </span>
+              </td>
+            </tr>
+          }
+          
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 🏢 🌟 FEUILLE MODALE : CONSULTATION DU PROFIL COMPLET DE L'ENTREPRISE -->
+  @if (selectedRecruiter) {
+    <div class="modal-overlay" (click)="onCloseRecruiterModal()">
+      <div class="modal-card recruiter-profile-card" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <span>📄 Fiche de l'entreprise</span>
+          <button (click)="onCloseRecruiterModal()" class="btn-close-modal"><i class="bi bi-x-lg"></i></button>
+        </div>
+        <div class="modal-body">
+          <div class="recruiter-meta-header">
+            <div class="large-avatar-placeholder">
+              @if (selectedRecruiter.company_logo) {
+                <img [src]="assetsUrl + '/logos/' + selectedRecruiter.company_logo" alt="Logo">
+              } @else {
+                <i class="bi bi-building" style="font-size: 32px; color: #cbd5e1;"></i>
+              }
+            </div>
+            <div class="recruiter-main-titles">
+              <h4>{{ selectedRecruiter.company_name }}</h4>
+              <span class="badge-verified"><i class="bi bi-patch-check-fill"></i> Partenaire Vérifié</span>
+            </div>
+          </div>
+
+          <div class="recruiter-contact-grid">
+            <div class="contact-item"><strong><i class="bi bi-envelope-fill"></i> Email :</strong> <span>{{ selectedRecruiter.email || 'Non spécifié' }}</span></div>
+            <div class="contact-item"><strong><i class="bi bi-telephone-fill"></i> Téléphone :</strong> <span>{{ selectedRecruiter.phone || 'Non spécifié' }}</span></div>
+            <div class="contact-item span-two"><strong><i class="bi bi-geo-alt-fill"></i> Siège social :</strong> <span>{{ selectedRecruiter.address || 'Non spécifié' }}</span></div>
+          </div>
+
+          <div class="detail-block" style="margin-top: 15px;">
+            <strong>À propos de l'entreprise :</strong>
+            <p class="bio-text-box">{{ selectedRecruiter.company_bio || 'Aucune description fournie par l\'entreprise.' }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- 👁️ 🌟 FEUILLE MODALE : DETAILS COMPLETS DE L'OFFRE D'EMPLOI SUIVIE -->
+  @if (selectedJob) {
+    <div class="modal-overlay" (click)="onCloseJobModal()">
+      <div class="modal-card" (click)="$event.stopPropagation()">
+        
+        <div class="modal-header">
+          <span>📄 Détails de l'offre d'emploi</span>
+          <button (click)="onCloseJobModal()" class="btn-close-modal"><i class="bi bi-x-lg"></i></button>
+        </div>
+
+        <div class="modal-body">
+          <div class="job-hero-section">
+            <div class="job-logo-wrapper">
+              <img [src]="selectedJob.company_logo ? assetsUrl + '/logos/' + selectedJob.company_logo : 'assets/images/default-avatar.png'" 
+                   (error)="$any($event.target).src='https://placehold.co'"
+                   alt="Logo entreprise">
+            </div>
+
+            <div>
+              <h1 class="job-main-title">{{ selectedJob.title }}</h1>
+              <div class="job-company-link" (click)="onViewRecruiterProfile(selectedJob.recruiter_id)">
+                {{ selectedJob.company_name }}
+              </div>
+              
+              <div class="job-badges-row">
+                <span class="premium-badge badge-contract">💼 {{ selectedJob.contract_type }}</span>
+                <span class="premium-badge badge-location">📍 {{ selectedJob.location }}</span>
+                
+                @if (selectedJob.expires_at) {
+                  <span class="premium-badge badge-expiration">⏱️ {{ selectedJob.expires_at | date:'dd/MM/yyyy' }}</span>
+                }
+              </div>
+            </div>
+          </div>
+
+          <details class="ats-section-card" open>
+            <summary class="ats-section-summary">
+              <span>📋 Contenu de la fiche de poste</span>
+              <i class="bi bi-chevron-down accordion-icon"></i>
+            </summary>
+            
+            <div class="ats-section-content">
+              <div class="job-text-block-section">
+                <h2 class="section-title">Missions principales</h2>
+                <div class="job-block-card">
+                  <p>{{ selectedJob.missions_desc }}</p>
+                </div>
+              </div>
+
+              <div class="job-text-block-section">
+                <h2 class="section-title">Profil requis & Prérequis</h2>
+                <div class="job-block-card">
+                  <p>{{ selectedJob.profile_desc }}</p>
+                </div>
+              </div>
+
+              <div class="skills-grid" style="margin-top: 15px; margin-bottom: 5px;">
+                @if (selectedJob.skills_desc) {
+                  <div class="skills-block">
+                    <h3>Compétences</h3>
+                    <div class="tags-list">
+                      @for (skill of getSearchJobSkillsArray(selectedJob.skills_desc); track $index) {
+                        <span class="tag">{{ skill }}</span>
+                      }
+                    </div>
+                  </div>
+                }
+                @if (selectedJob.languages_desc) {
+                  <div class="skills-block">
+                    <h3>Langues</h3>
+                    <div class="tags-list">
+                      @for (lang of getSearchJobLanguagesArray(selectedJob.languages_desc); track $index) {
+                        <span class="tag">🌐 {{ lang }}</span>
+                      }
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+          </details>
+
+          <div class="modal-footer-action-row">
+            <span class="premium-applied-banner"><i class="bi bi-check-circle-fill"></i> Vous avez envoyé votre dossier de candidature à ce poste</span>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+  }
+
+</div>

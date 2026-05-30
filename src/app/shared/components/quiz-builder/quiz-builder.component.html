@@ -1,0 +1,100 @@
+<div class="quiz-builder-card">
+  <div class="quiz-builder-header">
+    <div>
+      <h4><i class="bi bi-patch-question-fill"></i> Quiz de présélection</h4>
+      <p>Maximum {{ maxQuestions }} questions · 3 réponses QCM par question · 1 bonne réponse</p>
+    </div>
+    @if (showManageActions) {
+      <span class="quiz-status-pill" [class.active]="isActive" [class.hidden]="!isActive">
+        {{ isActive ? 'Visible candidats' : 'Masqué' }}
+      </span>
+    }
+  </div>
+
+  @if (!hideActivationToggle) {
+    <label class="quiz-toggle-row" style="margin-bottom: 14px; cursor: pointer;">
+      <input type="checkbox" [checked]="enabled" (change)="onToggleEnabled($any($event.target).checked)" />
+      <span style="font-size: 14px; font-weight: 600; color: #334155;">Activer un quiz pour cette offre</span>
+    </label>
+  }
+
+  @if (enabled) {
+    <div class="quiz-title-field">
+      <label>Titre affiché aux candidats</label>
+      <input
+        type="text"
+        [ngModel]="quizTitle"
+        (ngModelChange)="updateTitle($event)"
+        name="quizTitleInput"
+        placeholder="Ex : Test technique — Développeur Angular"
+      />
+    </div>
+
+    <p class="quiz-counter">{{ questions.length }} / {{ maxQuestions }} questions</p>
+
+    @for (q of questions; track $index; let qi = $index) {
+      <div class="question-card">
+        <div class="question-card-header">
+          <span class="question-number">Question {{ qi + 1 }}</span>
+          @if (questions.length > 1) {
+            <button type="button" class="btn-remove-q" (click)="removeQuestion(qi)">Supprimer</button>
+          }
+        </div>
+        <input
+          type="text"
+          [(ngModel)]="q.question_text"
+          [name]="'qb_q_' + qi"
+          placeholder="Ex : Quelle est votre expérience avec Angular ?"
+        />
+        <span class="choices-label">3 réponses — cliquez sur « Bonne réponse »</span>
+        @for (c of q.choices; track $index; let ci = $index) {
+          <div class="choice-row" [class.correct-selected]="c.is_correct">
+            <span style="font-weight: 700; color: #94a3b8; width: 18px;">{{ ['A', 'B', 'C'][ci] }}</span>
+            <input
+              type="text"
+              [(ngModel)]="c.choice_text"
+              [name]="'qb_c_' + qi + '_' + ci"
+              [placeholder]="'Réponse ' + ['A', 'B', 'C'][ci]"
+            />
+            <button
+              type="button"
+              class="btn-mark-correct"
+              [class.is-correct]="c.is_correct"
+              (click)="setCorrectChoice(qi, ci)"
+            >
+              {{ c.is_correct ? '✓ Bonne réponse' : 'Marquer correcte' }}
+            </button>
+          </div>
+        }
+      </div>
+    }
+
+    <button
+      type="button"
+      class="btn-add-question"
+      (click)="addQuestion()"
+      [disabled]="questions.length >= maxQuestions"
+    >
+      + Ajouter une question ({{ questions.length }}/{{ maxQuestions }})
+    </button>
+
+    @if (showSaveButton || showManageActions) {
+      <div class="quiz-actions-bar">
+        <button type="button" class="btn-save-quiz" (click)="save.emit()" [disabled]="isSaving">
+          {{ isSaving ? 'Enregistrement…' : 'Enregistrer le quiz' }}
+        </button>
+        @if (showManageActions) {
+          @if (isActive) {
+            <button type="button" class="btn-hide-quiz" (click)="toggleVisibility.emit(false)">
+              <i class="bi bi-eye-slash"></i> Masquer aux candidats
+            </button>
+          } @else {
+            <button type="button" class="btn-hide-quiz btn-show-quiz" (click)="toggleVisibility.emit(true)">
+              <i class="bi bi-eye"></i> Rendre disponible
+            </button>
+          }
+        }
+      </div>
+    }
+  }
+</div>

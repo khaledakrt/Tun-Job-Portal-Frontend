@@ -1,0 +1,179 @@
+<div class="profile-container-compact">
+  
+  <div class="card-header-flex-compact">
+    <div class="card-header-left">
+      <h3><i class="bi bi-building-fill"></i> Gestion du Profil & Sécurité</h3>
+    </div>
+  </div>
+
+  <!-- Alertes -->
+  @if (successMessage) {
+    <div class="alert-box-compact alert-success">{{ successMessage }}</div>
+  }
+  @if (passwordSuccessMessage) {
+    <div class="alert-box-compact alert-success">{{ passwordSuccessMessage }}</div>
+  }
+  @if (passwordErrorMessage) {
+    <div class="alert-box-compact alert-danger">{{ passwordErrorMessage }}</div>
+  }
+
+  <!-- DISPOSITION SPLIT -->
+  <div class="profile-split-layout">
+    
+    <!-- ================= COLONNE GAUCHE : PROFIL ENTREPRISE ================= -->
+    <div class="profile-panel-card">
+      <form (ngSubmit)="onSaveProfile($event)">
+        
+        <div class="logo-section-compact">
+          <div class="logo-preview-compact">
+            @if (logoPreviewUrl) {
+              <img [src]="logoPreviewUrl" alt="Logo">
+            } @else {
+              <i class="bi bi-building-fill" style="font-size: 24px; color: #cbd5e1;"></i>
+            }
+          </div>
+          <div class="upload-actions-compact">
+            <input type="file" id="logoInput" accept="image/*" (change)="onFileSelected($event)" style="display: none;">
+            <button type="button" class="btn-secondary-upload-compact" [disabled]="!isEditMode" onclick="document.getElementById('logoInput').click()">
+              <i class="bi bi-camera-fill"></i> Changer le logo
+            </button>
+          </div>
+        </div>
+
+        <div class="compact-form-grid">
+          <div class="form-group-compact">
+            <label>Nom du responsable *</label>
+            @if (isEditMode) {
+              <input type="text" name="name" [(ngModel)]="profile.name" required>
+            } @else {
+              <div class="static-text-compact">{{ profile.name || 'Non renseigné' }}</div>
+            }
+          </div>
+
+          <div class="form-group-compact">
+            <label>Raison sociale *</label>
+            @if (isEditMode) {
+              <input type="text" name="company_name" [(ngModel)]="profile.company_name" required>
+            } @else {
+              <div class="static-text-compact">{{ profile.company_name || 'Non renseigné' }}</div>
+            }
+          </div>
+
+          <div class="form-group-compact">
+            <label>Téléphone *</label>
+            @if (isEditMode) {
+              <input type="text" name="phone" [(ngModel)]="profile.phone" required>
+            } @else {
+              <div class="static-text-compact">{{ profile.phone || 'Non renseigné' }}</div>
+            }
+          </div>
+
+          <div class="form-group-compact">
+            <label>Email de contact *</label>
+            @if (isEditMode) {
+              <input type="email" name="email" [(ngModel)]="profile.email" required>
+            } @else {
+              <div class="static-text-compact">{{ profile.email || 'Non renseigné' }}</div>
+            }
+          </div>
+
+          <div class="form-group-compact span-all">
+            <label>Adresse du siège *</label>
+            @if (isEditMode) {
+              <div class="autocomplete-wrapper">
+                <input type="text" name="address" [(ngModel)]="profile.address" 
+                       (input)="onLocationInput($event)"
+                       (blur)="onLocationBlur()"
+                       placeholder="Ex: Tunis, La Marsa" required>
+                @if (showLocationSuggestions && filteredLocations.length > 0) {
+                  <ul class="autocomplete-dropdown">
+                    @for (loc of filteredLocations; track loc.cite) {
+                      <li (mousedown)="selectLocation(loc)">{{ loc.ville }}, {{ loc.cite }}</li>
+                    }
+                  </ul>
+                }
+              </div>
+            } @else {
+              <div class="static-text-compact">{{ profile.address || 'Non renseigné' }}</div>
+            }
+          </div>
+
+          <div class="form-group-compact span-all">
+            <label>Présentation & Activités *</label>
+            @if (isEditMode) {
+              <textarea name="company_bio" [(ngModel)]="profile.company_bio" rows="3" required></textarea>
+            } @else {
+              <div class="static-text-compact textarea-view-compact">{{ profile.company_bio || 'Aucune description.' }}</div>
+            }
+          </div>
+        </div>
+
+        <div class="form-actions-compact">
+          @if (!isEditMode) {
+            <button type="button" class="btn-save-compact" (click)="toggleEditMode(true)">
+              <i class="bi bi-pencil-square"></i> Modifier le profil
+            </button>
+          } @else {
+            <button type="button" class="btn-cancel-compact" (click)="toggleEditMode(false)">Annuler</button>
+            <button type="submit" class="btn-save-compact"><i class="bi bi-shield-check"></i> Enregistrer</button>
+          }
+        </div>
+      </form>
+    </div>
+
+    <!-- ================= COLONNE DROITE : SÉCURITÉ DU COMPTE ================= -->
+    <div class="profile-panel-card">
+      <div class="panel-inner-title"><i class="bi bi-shield-lock-fill"></i> Sécurité du compte</div>
+      
+      <form (ngSubmit)="onUpdatePassword($event)">
+        <div class="compact-form-grid vertical-stack">
+          
+          <!-- Mot de passe actuel -->
+          <div class="form-group-compact">
+            <label>Mot de passe actuel *</label>
+            @if (isPasswordEditMode) {
+              <input type="password" name="current_password" [(ngModel)]="passwordData.currentPassword" required placeholder="••••••••">
+            } @else {
+              <div class="static-text-compact text-muted-dots">••••••••••••</div>
+            }
+          </div>
+
+          <!-- Nouveau Mot de passe -->
+          <div class="form-group-compact">
+            <label>Nouveau mot de passe *</label>
+            @if (isPasswordEditMode) {
+              <input type="password" name="new_password" [(ngModel)]="passwordData.newPassword" required placeholder="Min. 6 caractères">
+            } @else {
+              <div class="static-text-compact text-muted-dots">••••••••••••</div>
+            }
+          </div>
+
+          <!-- Confirmation -->
+          <div class="form-group-compact">
+            <label>Confirmer le mot de passe *</label>
+            @if (isPasswordEditMode) {
+              <input type="password" name="confirm_password" [(ngModel)]="passwordData.confirmPassword" required placeholder="••••••••">
+            } @else {
+              <div class="static-text-compact text-muted-dots">••••••••••••</div>
+            }
+          </div>
+        </div>
+
+        <!-- 🛠️ ENCAPSULATION DES ACTIONS DU MOT DE PASSE SÉPARÉES -->
+        <div class="form-actions-compact" style="margin-top: 24px;">
+          @if (!isPasswordEditMode) {
+            <!-- Mode Fermé : Bouton pour ouvrir -->
+            <button type="button" class="btn-save-compact btn-dark-theme" (click)="togglePasswordEditMode(true)">
+              <i class="bi bi-key-fill"></i> Modifier le mot de passe
+            </button>
+          } @else {
+            <!-- Mode Ouvert : Duo Annuler / Enregistrer -->
+            <button type="button" class="btn-cancel-compact" (click)="togglePasswordEditMode(false)">Annuler</button>
+            <button type="submit" class="btn-save-compact btn-dark-theme"><i class="bi bi-shield-check"></i> Enregistrer</button>
+          }
+        </div>
+      </form>
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,165 @@
+<div class="candidate-app-container">
+  
+  <!-- 🧭 SIDEBAR COMPLÈTE & PROFESSIONNELLE DU CANDIDAT (D'origine, inchangée) -->
+  <aside class="candidate-sidebar">
+    <div class="sidebar-brand">
+      <!-- 1. Titre de la marque en haut -->
+      <div class="logo-text">Tun<span>Job</span> Candidate</div>
+      
+      <!-- 2. Bloc utilisateur en dessous -->
+      <div class="user-profile-section">
+        <div class="sidebar-user-avatar">
+          <img [src]="candidateAvatar ? assetsUrl + '/logos/' + candidateAvatar : 'assets/images/default-avatar.png'" 
+               (error)="$any($event.target).src='https://placehold.co/100x100?text=User'"
+               alt="Profile">
+        </div>
+        <div class="user-sidebar-name">{{ candidateName }}</div>
+      </div>
+    </div>
+
+    <!-- Menu de navigation -->
+    <nav class="sidebar-nav">
+      <div class="nav-section-title">Recherche & Suivi</div>
+      
+      <!-- Lien 1 : Recherche d'emploi -->
+      <a routerLink="/candidate/job-search" routerLinkActive="active" class="nav-link-item">
+        <i class="bi bi-search"></i> Trouver un emploi
+      </a>
+      
+      <!-- Lien 2 : Historique des candidatures -->
+      <a routerLink="/candidate/applications-list" routerLinkActive="active" class="nav-link-item">
+        <i class="bi bi-file-earmark-check-fill"></i> Mes candidatures
+      </a>
+
+      <div class="nav-section-title">Mon Profil & CV</div>
+      
+      <!-- Lien 3 : Générateur de CV -->
+      <a routerLink="/candidate/cv-builder" routerLinkActive="active" class="nav-link-item">
+        <i class="bi bi-file-earmark-person-fill"></i> Construire mon CV
+      </a>
+      
+      <!-- Lien 4 : Visualiser le CV public -->
+      <a routerLink="/candidate/cv-view" routerLinkActive="active" class="nav-link-item">
+        <i class="bi bi-eye-fill"></i> Voir mon CV public
+      </a>
+
+      <!-- Lien 5 : Configuration du Profil Personnel -->
+      <a routerLink="/candidate/profile-settings" routerLinkActive="active" class="nav-link-item">
+        <i class="bi bi-sliders"></i> Configuration Profil
+      </a>
+
+      <!-- Bouton Déconnexion sécurisé en bas de la Sidebar -->
+      <a (click)="onLogout()" class="nav-link-item logout-item" style="margin-top: auto; color: #ef4444; cursor: pointer;">
+        <i class="bi bi-box-arrow-left" style="color: #ef4444;"></i> Quitter la session
+      </a>
+    </nav>
+  </aside>
+
+  <!-- 💻 ZONE DE CONTENU PRINCIPALE (DROITE) (D'origine, inchangée) -->
+  <main class="candidate-main">
+  <!-- HEADER BLANC : Aligne la cloche à l'extrême droite -->
+  <header class="candidate-header" style="display: flex; justify-content: space-between; align-items: center; background-color: #ffffff; padding: 24px 40px; border-bottom: 1px solid #e2e8f0;">
+    
+    <!-- Bloc vide à gauche pour pousser la notification vers la droite -->
+    <div class="spacer-left"></div>
+
+    <!-- INJECTION DU CENTRE DE NOTIFICATIONS TOUT À DROITE -->
+    <div style="display: flex; align-items: center;">
+      <app-notification-center></app-notification-center>
+    </div>
+    
+  </header>
+
+  <!-- ZONE D'INJECTION DYNAMIQUE POUR LES SOUS-PAGES (NETTOYÉE ET PROPRE) -->
+  <div class="candidate-content-body" style="padding: 30px 40px;">
+    <router-outlet></router-outlet>
+  </div>
+</main>
+
+
+  <!-- 🎛️ UNIQUE AJOUT : MODAL DU SUIVI DE STATUT (S'affiche uniquement au clic sur une notif) -->
+  <!-- 🎛️ POPUP DE SUIVI DE CANDIDATURE CANDIDAT EN SURIMPRESSION (DESIGN RECRUTEUR ALIGNÉ) -->
+  <div *ngIf="selectedNotifData" class="modal-overlay" (click)="closeModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+        
+        <!-- En-tête -->
+        <div class="modal-header">
+          <h3><i class="bi bi-building-check"></i> Détails de l'entreprise & Statut</h3>
+          <button class="close-btn" (click)="closeModal()">&times;</button>
+        </div>
+
+        <!-- Corps des détails avec intégration du logo de la société -->
+        <div class="modal-body">
+          
+          <!-- Structure alignée sur le design Recruteur ATS -->
+          <div class="candidate-top-row">
+            
+            <!-- 📸 Bloc Logo Société -->
+            <div class="candidate-photo-block">
+              <div class="candidate-avatar">
+                <img [src]="selectedNotifData.avatar_logo ? assetsUrl + '/logos/' + selectedNotifData.avatar_logo : 'assets/images/default-avatar.png'" 
+                     (error)="$any($event.target).src='assets/images/default-avatar.png'"
+                     alt="Logo entreprise">
+              </div>
+              <span class="badge-status-pro-ats" style="margin-top: 5px;">Employeur</span>
+            </div>
+
+            <!-- 📝 Bloc des informations textuelles -->
+            <div class="candidate-main-info">
+              <div class="info-row">
+                <span class="info-label">Entreprise :</span> 
+                <strong class="info-value text-slate" style="color: #0ea5e9; font-size: 15px;">{{ selectedNotifData.company_name }}</strong>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Poste ciblé :</span> 
+                <strong class="info-value text-slate">{{ selectedNotifData.job_title }}</strong>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Adresse e-mail :</span> 
+                <span class="info-value">{{ selectedNotifData.email }}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Téléphone :</span> 
+                <span class="info-value">{{ selectedNotifData.phone || 'Non renseigné' }}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Ville / Région :</span> 
+                <span class="info-value">{{ selectedNotifData.address || 'Non spécifiée' }}</span>
+              </div>
+            </div>
+
+          </div>
+          
+          <!-- Boîte du message de statut -->
+          <div class="summary-box">
+            <span class="summary-title">
+              Statut actuel de votre dossier
+            </span>
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+              <span style="font-size: 13px; color: #64748b;">État :</span>
+              <span [ngClass]="{
+                'status-badge-fixed bg-blue': selectedNotifData.status === 'Entretien',
+                'status-badge-fixed bg-emerald': selectedNotifData.status === 'Proposition',
+                'status-badge-fixed bg-amber': selectedNotifData.status === 'En cours d\'étude',
+                'status-badge-fixed bg-red': selectedNotifData.status === 'Refusé'
+              }">
+                {{ selectedNotifData.status }}
+              </span>
+            </div>
+            <p class="summary-text">
+              {{ selectedNotifData.message }}
+            </p>
+          </div>
+        </div>
+
+        <!-- Pied de page -->
+        <div class="modal-footer" style="display: flex; justify-content: flex-end; padding-top: 16px; border-top: 1px solid #f1f5f9;">
+          <button class="btn-secondary" (click)="closeModal()" style="padding: 8px 24px !important; font-size: 12px !important; font-weight: 600 !important; cursor: pointer !important;">
+            Fermer
+          </button>
+        </div>
+
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,207 @@
+<div class="job-container-compact">
+  
+  <!-- En-tête épuré et compact -->
+  <div class="card-header-flex-compact">
+    <div class="card-header-left">
+      <h3><i class="bi bi-file-earmark-medical-fill" style="color: #0ea5e9;"></i> Rédaction d'une fiche de poste</h3>
+      <p style="margin: 2px 0 0 0; color: #64748b; font-size: 13px;">Remplissez les critères requis pour diffuser votre annonce d'emploi en Tunisie.</p>
+    </div>
+  </div>
+
+  <!-- Intégration de la notification flash professionnelle temporisée -->
+  @if (notification.show) {
+    <div class="toast-notification" [ngClass]="notification.type">
+      <div class="toast-content">
+        <span class="toast-icon">{{ notification.type === 'success' ? '✅' : '❌' }}</span>
+        <p class="toast-message">{{ notification.message }}</p>
+      </div>
+    </div>
+  }
+
+  <!-- 📊 DISPOSITION DOUBLE PANNEAU SANS SCROLL -->
+  <form (ngSubmit)="onPublish($event)" class="job-split-layout">
+
+    <!-- 🧱 COLONNE GAUCHE : GROUPEMENT POUR GARDER LE QUIZ SOUS LES CRITÈRES -->
+    <div style="display: flex; flex-direction: column; gap: 24px;">
+      
+      <!-- 1. CARTE DES CRITÈRES -->
+      <div class="job-panel-card">
+        <div class="panel-inner-title"><i class="bi bi-sliders"></i> Critères de l'offre</div>
+        
+        <div class="compact-form-grid">
+          <div class="form-group-compact span-all">
+            <label for="title">Intitulé du poste *</label>
+            <input type="text" id="title" name="title" [(ngModel)]="job.title" placeholder="Ex: Développeur Angular Senior" required>
+          </div>
+          
+          <div class="form-group-compact span-all">
+            <label for="location-autocomplete">Localisation *</label>
+            <div class="autocomplete-wrapper">
+              <input type="text" id="location-autocomplete" name="location" [(ngModel)]="job.location"
+                     (input)="onLocationInput($event)"
+                     (blur)="onLocationBlur()"
+                     placeholder="Ex: Tunis, La Marsa" required>
+              <ul *ngIf="showLocationSuggestions && filteredLocations.length > 0" class="autocomplete-dropdown">
+                <li *ngFor="let loc of filteredLocations" (mousedown)="selectLocation(loc)">
+                  {{ loc.ville }}, {{ loc.cite }}
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="form-group-compact">
+            <label for="contract_type">Type de contrat</label>
+            <select id="contract_type" name="contract_type" [(ngModel)]="job.contract_type" class="form-select-compact">
+              <option value="CDI">CDI</option>
+              <option value="CDD">CDD</option>
+              <option value="SIVP">SIVP / Stage</option>
+              <option value="Freelance">Freelance</option>
+            </select>
+          </div>
+
+          <div class="form-group-compact">
+            <label for="workplace_type">Mode de travail</label>
+            <select id="workplace_type" name="workplace_type" [(ngModel)]="job.workplace_type" class="form-select-compact">
+              <option value="Présentiel">Présentiel</option>
+              <option value="Hybride">Hybride</option>
+              <option value="Télétravail">Télétravail à 100%</option>
+            </select>
+          </div>
+
+          <div class="form-group-compact">
+            <label for="salary">Salaire indicatif (Optionnel)</label>
+            <input type="text" id="salary" name="salary" [(ngModel)]="job.salary" placeholder="Ex: 1500 - 2200 DT">
+          </div>
+
+          <div class="form-group-compact">
+            <label for="experience_level">Expérience requise</label>
+            <select id="experience_level" name="experience_level" [(ngModel)]="job.experience_level" class="form-select-compact">
+              <option value="Junior (0-2 ans)">Junior (0-2 ans)</option>
+              <option value="Intermédiaire (2-5 ans)">Intermédiaire (2-5 ans)</option>
+              <option value="Senior (5+ ans)">Senior (5+ ans)</option>
+            </select>
+          </div>
+
+          <div class="form-group-compact span-all">
+            <label for="expires_at">Date limite de candidature</label>
+            <input type="date" id="expires_at" name="expires_at" [(ngModel)]="job.expires_at">
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. CARTE DU QUIZ (SÉPARÉE ET SOUS LES CRITÈRES) -->
+      <div class="job-panel-card">
+        <div class="panel-inner-title">
+          <h4><i class="bi bi-patch-question-fill" style="color: #8b5cf6;"></i> Quiz de présélection (optionnel)</h4>
+        </div>
+        <p style="margin-top: -10px; margin-bottom: 15px; color: #64748b; font-size: 13px;">Ajoutez un questionnaire QCM pour filtrer les candidatures.</p>
+
+        @if (hasQuiz && quizSaved) {
+          <div class="quiz-saved-banner">
+            <div>
+              <strong><i class="bi bi-check-circle-fill"></i> Quiz enregistré</strong>
+              <p>{{ quizTitle }} · {{ quizQuestions.length }} question(s)</p>
+            </div>
+            <div class="quiz-saved-actions">
+              <button type="button" class="btn-quiz-secondary" (click)="onEditQuiz()">Modifier</button>
+              <button type="button" class="btn-quiz-danger" (click)="onDisableQuiz()">Retirer</button>
+            </div>
+          </div>
+        } @else {
+          <button type="button" class="btn-activate-quiz" (click)="onOpenQuizModal()">
+            <i class="bi bi-plus-circle-fill"></i> Activer un quiz pour cette offre
+          </button>
+        }
+      </div>
+    </div>
+
+    <!-- ================= PANNEAU DROIT : DESCRIPTIONS & ACTION ================= -->
+    <div class="job-panel-card">
+      <div class="panel-inner-title"><i class="bi bi-text-paragraph"></i> Contenu de la fiche de poste</div>
+      
+      <div class="compact-form-grid vertical-stack">
+        <!-- Missions principales -->
+        <div class="form-group-compact">
+          <label for="missions">Missions principales *</label>
+          <textarea id="missions" name="missions_desc" [(ngModel)]="job.missions_desc" rows="3" placeholder="Décrivez les responsabilités quotidiennes et les projets techniques..." required></textarea>
+        </div>
+
+        <!-- Profil recherché -->
+        <div class="form-group-compact">
+          <label for="profile">Profil recherché & Prérequis *</label>
+          <textarea id="profile" name="profile_desc" [(ngModel)]="job.profile_desc" rows="3" placeholder="Compétences clés, technologies maîtrisées, soft skills..." required></textarea>
+        </div>
+
+        <!-- Compétences clés & Technologies (Avec rendu de badges en direct) -->
+        <div class="form-group-compact">
+          <label for="skills">Compétences clés & Technologies *</label>
+          <textarea id="skills" name="skills_desc" [(ngModel)]="job.skills_desc" rows="2" placeholder="Ex: Docker, Kubernetes, MySQL, JavaScript... (Séparez par des virgules)" required></textarea>
+          
+          @if (getSkillsArray().length > 0) {
+            <div class="skills-badge-preview-grid" style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px;">
+              @for (skill of getSkillsArray(); track $index) {
+                <span class="live-skill-tag" style="background-color: #E0F2FE; color: #0369A1; border: 1px solid rgba(3, 105, 161, 0.2); padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 500; letter-spacing: -0.1px; display: inline-flex; align-items: center;">
+    {{ skill }}
+</span>
+
+              }
+            </div>
+          }
+        </div>
+
+        <!-- Langues exigées (Avec rendu de badges en direct) -->
+        <div class="form-group-compact">
+          <label for="languages">Langues exigées *</label>
+          <textarea id="languages" name="languages_desc" [(ngModel)]="job.languages_desc" rows="2" placeholder="Ex: Français (Excellent), Anglais (Technique)... (Séparez par des virgules)" required></textarea>
+          
+          @if (getLanguagesArray().length > 0) {
+            <div class="skills-badge-preview-grid" style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px;">
+              @for (lang of getLanguagesArray(); track $index) {
+                <span class="live-skill-tag" style="background-color: #f0f9ff; color: #0369a1; border: 1px solid rgba(3, 105, 161, 0.15); padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 500; letter-spacing: -0.1px; display: inline-flex; align-items: center; gap: 6px;">
+    {{ lang }}
+</span>
+
+              }
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="form-actions-compact" style="margin-top: 20px;">
+        <button type="submit" class="btn-publish-job-compact" [disabled]="!canPublishJob" [style.opacity]="canPublishJob ? '1' : '0.55'">
+          <i class="bi bi-rocket-takeoff-fill"></i>
+          @if (hasQuiz && !quizSaved) {
+            Enregistrez le quiz pour publier
+          } @else {
+            Diffuser l'annonce
+          }
+        </button>
+      </div>
+    </div>
+  </form>
+
+  @if (showQuizModal) {
+    <div class="quiz-modal-overlay" (click)="onCloseQuizModal()">
+      <div class="quiz-modal-card" (click)="$event.stopPropagation()">
+        <div class="quiz-modal-header">
+          <h3><i class="bi bi-patch-question-fill"></i> Créer le quiz de présélection</h3>
+          <button type="button" class="quiz-modal-close" (click)="onCloseQuizModal()" aria-label="Fermer">
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </div>
+        <div class="quiz-modal-body">
+          <app-quiz-builder
+            [enabled]="true"
+            [hideActivationToggle]="true"
+            [quizTitle]="quizTitle"
+            [questions]="quizQuestions"
+            [showSaveButton]="true"
+            (quizTitleChange)="onQuizTitleChange($event)"
+            (questionsChange)="onQuizQuestionsChange($event)"
+            (save)="onSaveQuizDraft()"
+          />
+        </div>
+      </div>
+    </div>
+  }
+</div>

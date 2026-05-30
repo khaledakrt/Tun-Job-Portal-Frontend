@@ -1,0 +1,158 @@
+<div class="cv-view-container">
+
+  
+<button class="btn-export-pdf" onclick="window.print()">
+      <i class="bi bi-file-earmark-pdf-fill"></i>
+      Télécharger au format PDF
+    </button>
+  <!-- LOADING -->
+  @if (isLoading) {
+    <div class="cv-loading-screen no-print">
+      <div class="spinner-pro"></div>
+      <p>Mise en page de vos compétences...</p>
+    </div>
+  }
+
+  <!-- EMPTY -->
+  @if (!isLoading && !candidateContact.email) {
+    <div class="cv-empty-screen no-print">
+      <i class="bi bi-file-earmark-x-fill text-slate-300" style="font-size: 40px;"></i>
+      <h4>Profil introuvable</h4>
+      <p>Veuillez configurer vos données dans l'onglet de création de CV.</p>
+    </div>
+  }
+
+  <!-- CV A4 -->
+  @if (!isLoading && candidateContact.email) {
+    <div class="cv-paper-a4">
+
+      <!-- SIDEBAR -->
+      <div class="cv-sidebar-slate">
+
+        <!-- Avatar -->
+        <div class="avatar-profile-box">
+          @if (avatarUrl) {
+            <img [src]="avatarUrl" alt="Photo de profil">
+          } @else {
+            <div class="avatar-fallback-initials">
+              <i class="bi bi-person-fill"></i>
+            </div>
+          }
+        </div>
+
+        <!-- NAME BLOCK (FIXED STRUCTURE) -->
+        <div class="sidebar-name-block">
+          <h2 class="candidate-full-name">{{ candidateName }}</h2>
+          <span class="candidate-job-target">
+            {{ cvData.title || 'Poste Recherché' }}
+          </span>
+        </div>
+
+        <!-- CONTACT -->
+        <div class="sidebar-block-section">
+          <h4 class="sidebar-section-title">Contact</h4>
+          <ul class="contact-ul-list">
+            <li><i class="bi bi-envelope-fill"></i> <span>{{ candidateContact.email }}</span></li>
+            <li><i class="bi bi-telephone-fill"></i> <span>{{ candidateContact.phone || 'Non spécifié' }}</span></li>
+            <li><i class="bi bi-geo-alt-fill"></i> <span>{{ candidateContact.address || 'Non spécifiée' }}</span></li>
+          </ul>
+        </div>
+
+        <!-- SKILLS -->
+        <div class="sidebar-block-section">
+          <h4 class="sidebar-section-title">Compétences</h4>
+          <div class="sidebar-tags-flex">
+            @if (cvData.skills) {
+              @for (skill of getSkillsArray(); track skill) {
+                <span class="pro-tag-skill">{{ skill.trim() }}</span>
+              }
+            } @else {
+              <span class="text-slate-400 text-xs italic">Aucune saisie.</span>
+            }
+          </div>
+        </div>
+
+        <!-- INTERESTS -->
+        <div class="sidebar-block-section">
+          <h4 class="sidebar-section-title">Centres d'intérêt</h4>
+          <div class="sidebar-tags-flex">
+            @if (cvData.interests) {
+              @for (interest of getInterestsArray(); track interest) {
+                <span class="pro-tag-interest">{{ interest.trim() }}</span>
+              }
+            } @else {
+              <span class="text-slate-400 text-xs italic">Aucun intérêt.</span>
+            }
+          </div>
+        </div>
+
+      </div>
+      <!-- END SIDEBAR -->
+
+      <!-- MAIN BODY -->
+      <div class="cv-main-body-white">
+
+        <!-- PROFILE -->
+        <div class="main-cv-section">
+          <h3 class="main-section-heading">Profil Professionnel</h3>
+          <p class="profile-summary-text-justify">
+            {{ cvData.summary || 'Aucun résumé rédigé.' }}
+          </p>
+        </div>
+
+        <!-- EXPERIENCE -->
+        <div class="main-cv-section">
+          <h3 class="main-section-heading">Parcours Professionnel</h3>
+
+          @if (cvData.experiences.length > 0) {
+            @for (exp of cvData.experiences; track exp) {
+              <div class="timeline-cv-item">
+                <div class="timeline-meta-row">
+                  <h4 class="timeline-item-title">{{ exp.job_title }}</h4>
+                  <span class="timeline-item-date">{{ exp.duration }}</span>
+                </div>
+                <span class="timeline-item-subtitle">
+                  <i class="bi bi-building"></i> {{ exp.company }}
+                </span>
+                <p class="timeline-item-description">
+                  {{ exp.description }}
+                </p>
+              </div>
+            }
+          } @else {
+            <p class="empty-section-notice-italic">
+              Aucune expérience professionnelle ajoutée.
+            </p>
+          }
+        </div>
+
+        <!-- EDUCATION -->
+        <div class="main-cv-section" style="margin-top: 25px;">
+          <h3 class="main-section-heading">Formations & Diplômes</h3>
+
+          @if (cvData.educations.length > 0) {
+            @for (edu of cvData.educations; track edu) {
+              <div class="timeline-cv-item">
+                <div class="timeline-meta-row">
+                  <h4 class="timeline-item-title">{{ edu.degree }}</h4>
+                  <span class="timeline-item-date">{{ edu.year }}</span>
+                </div>
+                <span class="timeline-item-subtitle">
+                  <i class="bi bi-mortarboard"></i> {{ edu.school }}
+                </span>
+              </div>
+            }
+          } @else {
+            <p class="empty-section-notice-italic">
+              Aucune formation répertoriée.
+            </p>
+          }
+        </div>
+
+      </div>
+      <!-- END MAIN -->
+
+    </div>
+  }
+
+</div>

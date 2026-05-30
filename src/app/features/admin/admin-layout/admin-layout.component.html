@@ -1,0 +1,47 @@
+ 
+<div class="admin-layout-container">
+  
+  <!-- 🧭 BARRE LATÉRALE DE NAVIGATION (SIDEBAR) -->
+  <aside class="admin-sidebar">
+    <div class="sidebar-header">
+      <h2>Tun<span>Job</span> Admin</h2>
+    </div>
+
+    <div class="admin-profile-box">
+      <div class="admin-avatar">
+        <i class="bi bi-shield-lock-fill"></i>
+      </div>
+      <div class="admin-info">
+        <span class="admin-name">{{ adminName }}</span>
+        <span class="admin-role">Super Admin</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-menu">
+      <a routerLink="/admin/overview" routerLinkActive="active-menu">
+        <i class="bi bi-speedometer2"></i> Vue d'ensemble
+      </a>
+      <a routerLink="/admin/manage-users" routerLinkActive="active-menu">
+        <i class="bi bi-person-gear"></i> Gestion Utilisateurs
+      </a>
+      <a routerLink="/admin/manage-jobs" routerLinkActive="active-menu">
+        <i class="bi bi-briefcase-fill"></i> Modération Offres
+      </a>
+      <a routerLink="/admin/manage-applications" routerLinkActive="active-menu">
+        <i class="bi bi-clipboard-data"></i> Modération Candidatures
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="btn-logout-admin" (click)="onLogout()">
+        <i class="bi bi-box-arrow-left"></i> Déconnexion
+      </button>
+    </div>
+  </aside>
+
+  <!-- 📺 ZONE DE CONTENU DYNAMIQUE (ROUTER OUTLET) -->
+  <main class="admin-main-content">
+    <router-outlet></router-outlet>
+  </main>
+
+</div>

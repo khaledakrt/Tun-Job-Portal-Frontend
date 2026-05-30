@@ -1,0 +1,315 @@
+/* ==========================================================================
+   🕋 STRUCTURE DU CONTENEUR GLOBAL CANDIDAT
+   ========================================================================== */
+.candidate-app-container {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background-color: #f8fafc;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* ==========================================================================
+   🧭 SIDEBAR PREMIUM (GAUCHE)
+   ========================================================================== */
+.candidate-sidebar {
+  width: 260px;
+  background: #0f172a; /* Bleu nuit pro */
+  color: #ffffff;
+  display: flex !important;
+  flex-direction: column !important;
+  padding: 24px 16px;
+  box-sizing: border-box;
+}
+
+.sidebar-brand {
+  display: flex !important;
+  flex-direction: column !important; /* Force l'empilement vertical */
+  align-items: flex-start !important;
+  gap: 20px !important; /* Espace entre le titre et le profil */
+  margin-bottom: 30px;
+  padding-left: 4px;
+}
+
+/* 📸 Style pour l'avatar rond dans la sidebar */
+.sidebar-user-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2px solid #0ea5e9; /* Cercle bleu ciel */
+  overflow: hidden;
+  background: #1e293b;
+  flex-shrink: 0;
+}
+.sidebar-user-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.user-profile-section {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  width: 100%;
+}
+
+.logo-text { font-size: 18px; font-weight: 700; }
+.logo-text span { color: #0ea5e9; }
+
+.user-sidebar-name {
+  font-size: 14px;
+  color: #f1f5f9; /* Couleur beaucoup plus claire et lisible */
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebar-nav { display: flex; flex-direction: column; gap: 4px; }
+
+.nav-section-title { 
+  font-size: 11px; 
+  font-weight: 700; 
+  color: #64748b; 
+  text-transform: uppercase; 
+  letter-spacing: 0.5px; 
+  margin: 20px 0 8px 8px; 
+  text-align: left; 
+}
+
+.nav-link-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  color: #94a3b8;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+.nav-link-item:hover, .nav-link-item.active {
+  background: #1e293b;
+  color: #ffffff;
+}
+.nav-link-item.active i { color: #0ea5e9; }
+
+/* ==========================================================================
+   💻 CONTENEUR DE CONTENU ET HEADER (DROITE)
+   ========================================================================== */
+.candidate-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  box-sizing: border-box;
+}
+
+.candidate-header {
+  background: #ffffff;
+  padding: 20px 30px;
+  border-bottom: 1px solid #e2e8f0;
+  text-align: left;
+}
+.header-welcome h2 { margin: 0; color: #0f172a; font-size: 20px; font-weight: 700; }
+.header-welcome p { margin: 4px 0 0 0; color: #64748b; font-size: 13.5px; }
+
+/* Corps d'affichage dynamique */
+.candidate-content-body {
+  flex: 1;
+  padding: 30px;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+/* ==========================================================================
+   🎛️ COUCHE SUPPLÉMENTAIRE : STRUCTURE DE LA VERITABLE MODAL POPUP CENTRÉE
+   ========================================================================== */
+.modal-overlay {
+  position: fixed !important;
+  top: 0; left: 0;
+  width: 100% !important;
+  height: 100% !important;
+  background: rgba(15, 23, 42, 0.5) !important;
+  backdrop-filter: blur(4px) !important;
+  z-index: 99999 !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.2s ease-out;
+}
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 24px;
+  border-bottom: 1px solid #f1f5f9;
+}
+.modal-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.modal-content {
+  background: #ffffff !important;
+  width: 100% !important;
+  max-width: 650px;
+  border-radius: 16px !important;
+  padding: 0 !important;
+  box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25) !important;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 📸 NOUVEAUX STYLES ALIGNÉS SUR LE RECRUTEUR */
+.candidate-top-row {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.candidate-photo-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100px;
+}
+
+.candidate-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+  background: #f8fafc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.candidate-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.badge-status-pro-ats {
+  background: #f1f5f9;
+  color: #64748b;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.candidate-main-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.info-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 13.5px;
+}
+
+.info-label {
+  color: #64748b;
+  min-width: 120px;
+}
+
+.summary-box {
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 16px;
+  border: 1px solid #e2e8f0;
+  margin-top: 10px;
+}
+
+.summary-title {
+  font-weight: 700;
+  font-size: 13px;
+  color: #0f172a;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.summary-text {
+  margin: 0;
+  color: #475569;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+/* 🎨 BADGES DE STATUT (COPIÉS DE L'ATS RECRUTEUR) */
+.status-badge-fixed {
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.bg-blue { background: #e0f2fe; color: #0369a1; }
+.bg-emerald { background: #dcfce7; color: #15803d; }
+.bg-amber { background: #fef3c7; color: #92400e; }
+.bg-red { background: #fee2e2; color: #b91c1c; }
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+.close-btn:hover {
+  color: #ef4444;
+}
+
+/* Corps de contenu interne */
+.modal-body {
+  padding: 24px;
+  overflow-y: auto;
+  text-align: left;
+}
+
+/* Pied de page contenant les boutons d'actions */
+.modal-footer {
+  padding: 14px 24px;
+  background-color: #f8fafc;
+  border-top: 1px solid #f1f5f9;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Bouton stylisé pour la fermeture */
+.btn-secondary {
+  background-color: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #334155;
+  padding: 8px 20px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.15s ease;
+}
+.btn-secondary:hover {
+  background-color: #f1f5f9;
+  border-color: #94a3b8;
+  color: #0f172a;
+}
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }

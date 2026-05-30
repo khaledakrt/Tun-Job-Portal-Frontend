@@ -1,0 +1,204 @@
+ 
+<div class="manage-container">
+  <div class="card-header-flex">
+    <div class="card-header-left">
+      <h3><i class="bi bi-person-gear"></i> Gestion des Utilisateurs</h3>
+      <p>Consultez la liste des membres inscrits et modérez les accès à la plateforme.</p>
+    </div>
+  </div>
+
+  <div class="manage-card-premium">
+    <div class="admin-search-bar">
+      <input type="text" placeholder="Rechercher utilisateur par nom, email ou rôle..." [(ngModel)]="searchTerm" />
+    </div>
+    <div class="table-wrapper-premium">
+      
+      <div *ngIf="isLoading" class="loading-box">
+        <i class="bi bi-arrow-clockwise spinning"></i> Chargement des comptes utilisateurs...
+      </div>
+
+      <table *ngIf="!isLoading" class="jobs-table-premium">
+        <thead>
+          <tr>
+            <th class="th-left-padding">Nom / Rôle</th>
+            <th>Adresse E-mail</th>
+            <th>Statut du compte</th>
+            <th class="th-center-align">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of filteredUsers" class="table-row-premium">
+            <td class="job-company-cell">
+              <span class="clickable-job-title" style="font-size: 14px !important; font-weight: 700;" (click)="openUserCard(user)">{{ user.name }}</span>
+              <span class="company-sub-badge">
+                <i class="bi" [ngClass]="user.role === 'recruiter' ? 'bi-building' : 'bi-person'"></i> 
+                {{ user.role === 'recruiter' ? 'Recruteur' : 'Candidat' }}
+              </span>
+            </td>
+            <td class="date-text-cell-premium">{{ user.email }}</td>
+            <td>
+              <span class="status-badge-fixed" [ngClass]="user.is_verified ? 'bg-emerald' : 'bg-amber'">
+                <span class="dot-status"></span>
+                <span class="badge-text-span">{{ user.is_verified ? 'Vérifié' : 'En attente' }}</span>
+              </span>
+            </td>
+                        <td class="status-cell-premium" style="display: flex; gap: 8px; justify-content: center;">
+              
+              <!-- 👑 Bouton Certifier : S'affiche UNIQUEMENT pour les recruteurs -->
+              <button *ngIf="user.role === 'recruiter'" 
+                      [style.background-color]="user.is_verified_company ? '#e0f2fe' : '#f1f5f9'"
+                      [style.color]="user.is_verified_company ? '#0369a1' : '#475569'"
+                      [style.border]="user.is_verified_company ? '1px solid #bae6fd' : '1px solid #cbd5e1'"
+                      style="padding: 6px 12px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;"
+                      (click)="onToggleVerification(user)">
+                <i class="bi" [ngClass]="user.is_verified_company ? 'bi-patch-check-fill' : 'bi-patch-check'"></i>
+                {{ user.is_verified_company ? 'Vérifié' : 'Certifier' }}
+              </button>
+
+              <button class="btn-action-delete" (click)="onDeleteUser(user.id)">
+                <i class="bi bi-trash3-fill"></i> Supprimer
+              </button>
+              
+            </td>
+
+          </tr>
+        </tbody>
+      </table>
+
+    </div>
+  </div>
+
+  <!-- 👁️ MODALE : FICHE DÉTAILLÉE ET ÉDITION DE L'UTILISATEUR -->
+  <div class="modal-overlay" *ngIf="showUserCard" (click)="closeUserCard()">
+    <div class="modal-card user-profile-card" (click)="$event.stopPropagation()">
+      
+      <div class="modal-header">
+        <div class="header-titles">
+          <span>📄 Gestion Utilisateur #{{ selectedUser.id }}</span>
+          <h3 class="user-main-title">{{ selectedUser.name }}</h3>
+        </div>
+        <button (click)="closeUserCard()" class="btn-close-modal"><i class="bi bi-x-lg"></i></button>
+      </div>
+
+      <div class="modal-body">
+        
+        <!-- ZONE HÉRO : AVATAR/LOGO & RÔLE -->
+        <div class="user-hero-section">
+          <div class="user-logo-wrapper">
+            <img [src]="selectedUser.company_logo ? assetsUrl + '/logos/' + selectedUser.company_logo : 'assets/images/default-avatar.png'" 
+                 (error)="$any($event.target).src='assets/images/default-avatar.png'"
+                 alt="Avatar">
+          </div>
+          <div class="user-meta-content">
+            <div class="badge-row">
+              <span class="premium-badge" [ngClass]="selectedUser.role === 'recruiter' ? 'badge-recruiter' : 'badge-candidate'">
+                {{ getUserRoleLabel(selectedUser) }}
+              </span>
+              <span class="premium-badge badge-verified" *ngIf="selectedUser.is_verified || selectedUser.is_verified_company">
+                <i class="bi bi-patch-check-fill"></i> {{ getVerificationLabel(selectedUser) }}
+              </span>
+            </div>
+            <p class="user-joined-date">Membre depuis le {{ selectedUser.created_at | date:'dd/MM/yyyy' }}</p>
+          </div>
+        </div>
+
+        <!-- FORMULAIRE D'ÉDITION -->
+        <div class="ats-section-card">
+          <div class="ats-section-summary">
+            <span><i class="bi bi-person-bounding-box"></i> Détails du profil</span>
+          </div>
+          
+          <div class="ats-section-content">
+            <form class="user-edit-form">
+              <div class="form-grid">
+                <!-- Nom -->
+                <div class="form-group">
+                  <label>Nom complet</label>
+                  <input type="text" [(ngModel)]="userEditData.name" name="name" [disabled]="!isUserEditMode" class="pro-input">
+                </div>
+
+                <!-- Email -->
+                <div class="form-group">
+                  <label>E-mail</label>
+                  <input type="email" [(ngModel)]="userEditData.email" name="email" [disabled]="!isUserEditMode" class="pro-input">
+                </div>
+
+                <!-- Téléphone -->
+                <div class="form-group">
+                  <label>Téléphone</label>
+                  <input type="text" [(ngModel)]="userEditData.phone" name="phone" [disabled]="!isUserEditMode" class="pro-input" placeholder="Non renseigné">
+                </div>
+
+                <!-- Rôle -->
+                <div class="form-group">
+                  <label>Rôle</label>
+                  <select [(ngModel)]="userEditData.role" name="role" [disabled]="!isUserEditMode" class="pro-input">
+                    <option value="candidate">Candidat</option>
+                    <option value="recruiter">Recruteur</option>
+                  </select>
+                </div>
+
+                <!-- Adresse -->
+                <div class="form-group full-width">
+                  <label>Adresse / Ville</label>
+                  <input type="text" [(ngModel)]="userEditData.address" name="address" [disabled]="!isUserEditMode" class="pro-input" placeholder="Non renseignée">
+                </div>
+
+              <!-- Adresse IP (Machine) -->
+              <div class="form-group">
+                <label>Adresse IP (Dernière machine)</label>
+                <input type="text" [(ngModel)]="userEditData.last_ip" name="last_ip" [disabled]="!isUserEditMode" class="pro-input" placeholder="0.0.0.0">
+              </div>
+
+              <!-- Mot de passe -->
+              <div class="form-group">
+                <label>Mot de passe {{ isUserEditMode ? '(Modifier)' : '' }}</label>
+                <input type="password" [(ngModel)]="userEditData.password" name="password" [disabled]="!isUserEditMode" class="pro-input" [placeholder]="isUserEditMode ? 'Saisir pour changer...' : '••••••••'">
+              </div>
+
+                <!-- CHAMPS RECRUTEUR UNIQUEMENT -->
+                <ng-container *ngIf="userEditData.role === 'recruiter'">
+                  <div class="form-group full-width separator"></div>
+                  
+                  <div class="form-group">
+                    <label>Entreprise</label>
+                    <input type="text" [(ngModel)]="userEditData.company_name" name="company_name" [disabled]="!isUserEditMode" class="pro-input brand-text">
+                  </div>
+
+                  <div class="form-group full-width">
+                    <label>Bio Entreprise</label>
+                    <textarea [(ngModel)]="userEditData.company_bio" name="company_bio" [disabled]="!isUserEditMode" class="pro-input pro-textarea" rows="3"></textarea>
+                  </div>
+
+                  <!-- Bouton de certification rapide -->
+                  <div class="form-group full-width" *ngIf="!isUserEditMode">
+                     <button type="button" class="btn-verify-toggle" (click)="onToggleVerification(selectedUser)">
+                       <i class="bi" [ngClass]="selectedUser.is_verified_company ? 'bi-shield-x' : 'bi-patch-check'"></i>
+                       {{ selectedUser.is_verified_company ? 'Révoquer la certification' : 'Certifier l\'entreprise' }}
+                     </button>
+                  </div>
+                </ng-container>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- FOOTER : ACTIONS -->
+      <div class="modal-footer-action-row">
+        <ng-container *ngIf="!isUserEditMode">
+          <button (click)="toggleUserEditMode(true)" class="btn-edit-pro">
+            <i class="bi bi-pencil-square"></i> Modifier le profil
+          </button>
+        </ng-container>
+
+        <ng-container *ngIf="isUserEditMode">
+          <button (click)="toggleUserEditMode(false)" class="btn-cancel-pro">Annuler</button>
+          <button (click)="onSaveUserEdit()" class="btn-save-pro">
+            <i class="bi bi-check-lg"></i> Enregistrer les changements
+          </button>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</div>

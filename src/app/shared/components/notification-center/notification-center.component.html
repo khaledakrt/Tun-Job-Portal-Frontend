@@ -1,0 +1,72 @@
+<div class="notification-container" style="position: relative;">
+  <!-- Clic sur la cloche pour ouvrir/fermer -->
+  <div class="notification-bell" (click)="toggleNotifications()">
+    <i class="bi bi-bell-fill"></i>
+    <span *ngIf="unreadCount > 0" class="bell-dot">
+      {{ unreadCount }}
+    </span>
+  </div>
+
+  <!-- 📥 LE DROPDOWN DES NOTIFICATIONS -->
+  <div *ngIf="showNotificationDropdown" class="notif-dropdown">
+    <div class="notif-header">
+      <span>Notifications</span>
+      <span class="mark-read">Récentes</span>
+    </div>
+    
+    <div class="notif-list">
+      <!-- S'il n'y a aucune notification -->
+      <div *ngIf="notificationsList.length === 0" class="notif-empty">
+        Aucune notification pour le moment.
+      </div>
+
+      <!-- Boucle pour afficher chaque notification -->
+      <div *ngFor="let notif of notificationsList" class="notif-item candidate-item-small" [class.unread]="!notif.is_read || notif.is_read === 0" (click)="readNotification(notif)">
+        
+        <!-- 📷 GESTION DE L'AVATAR (Candidat ou Recruteur) -->
+        <div class="candidate-avatar-small">
+          <img [src]="avatarUrl(notif.avatar_logo)" (error)="$any($event.target).src='assets/images/default-avatar.png'" alt="avatar">
+        </div>
+
+        <div class="candidate-summary-small">
+          <div class="candidate-top-small">
+            <!-- 👤 TITRE PRINCIPAL DE LA NOTIFICATION -->
+            <span class="candidate-name-small" style="font-weight: 700; color: #1e293b;">
+              {{ notif.name || notif.company_name }}
+            </span>
+            <span class="candidate-time-small">{{ notif.created_at | date:'dd/MM HH:mm' }}</span>
+          </div>
+          
+          <!-- 💬 TEXTE DU MESSAGE (Différenciation Recruteur / Candidat) -->
+          <div class="candidate-job-small" style="color: #475569; font-size: 13px; margin: 4px 0;">
+            <!-- Cas A : Message déjà complet (ex: "khaled akrt a postulé pour votre offre...") -->
+            <span *ngIf="notif.message && notif.message.includes('postulé'); else candidateStatusTemplate">
+              {{ notif.message }}
+            </span>
+
+            <!-- Cas B : Changement de statut (Côté Candidat) -->
+            <ng-template #candidateStatusTemplate>
+              <span *ngIf="notif.status && notif.job_title">
+                Votre candidature pour <strong>"{{ notif.job_title }}"</strong> a changé de statut : 
+                <span style="font-weight: 700; color: #0ea5e9;">{{ notif.status }}</span>
+              </span>
+              <span *ngIf="!notif.status || !notif.job_title">{{ notif.message }}</span>
+            </ng-template>
+          </div>
+
+          <!-- 🏷️ BADGES DE MÉTADONNÉES EN BAS -->
+          <div class="candidate-meta-small" style="display: flex; gap: 8px; margin-top: 4px;">
+            <!-- Localisation -->
+            <span class="meta-pill" *ngIf="notif.address"><i class="bi bi-geo-alt"></i> {{ notif.address }}</span>
+            
+            <!-- Badge d'action contextualisé -->
+            <span class="meta-pill" [style.background]="notif.message.includes('postulé') ? '#f0fdf4' : '#f0f9ff'" [style.color]="notif.message.includes('postulé') ? '#16a34a' : '#0ea5e9'" style="font-weight: 600;">
+              {{ notif.message.includes('postulé') ? 'Nouvelle candidature' : (notif.status || 'Alerte') }}
+            </span>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

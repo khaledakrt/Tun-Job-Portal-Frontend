@@ -1,5 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://onrender.com',
-  assetsUrl: 'https://tun-job-portal-backend.onrender.com'
+  apiUrl: '/api' // Ne mets PLUS le lien entier, mets juste '/api'
 };
